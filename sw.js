@@ -1,7 +1,7 @@
 // Service worker della demo: mette in cache i file dell'app per l'uso senza rete (Modo sentiero).
 // Nella demo non ci sono dati sul server, quindi si mette in cache solo il guscio dell'app.
 // Cambiare VERSIONE a ogni pubblicazione, così i telefoni scaricano i file nuovi.
-const VERSIONE = "campobase-demo-v6";
+const VERSIONE = "campobase-demo-v7";
 const FILE = [
   "./", "./index.html", "./app.css", "./app.js", "./calcoli.js", "./testi.js", "./assistente.js", "./modulo-partecipante.js", "./modulo-uscita.js", "./modulo-profilo.js", "./modulo-contenuti.js", "./modulo-uscita.css", "./modulo-profilo.css", "./modulo-contenuti.css", "./icone/mascotte-enrico.svg", "./manifest.webmanifest",
   "./icone/icon-192.png", "./icone/icon-512.png",

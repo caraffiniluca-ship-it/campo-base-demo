@@ -1,4 +1,4 @@
-// Campo Base · demo installabile. Tutti i dati sono di esempio e restano solo su questo telefono.
+// Gruvia · demo installabile. Tutti i dati sono di esempio e restano solo su questo telefono.
 "use strict";
 
 const CHIAVE = "campobase-demo-v3"; // chiave nuova: chi aveva i dati vecchi riparte dagli esempi aggiornati
@@ -186,7 +186,7 @@ const STATI_P = { confermato: ["Confermato", "c-ok"], richiesta: ["Richiesta", "
 function intestazioneLeader() {
   const ini = S.leader.marchio.split(" ").map((p) => p[0]).filter((c) => /[A-ZÀ-Ý]/.test(c)).slice(0, 2).join("");
   return `<div class="leader"><div class="avatar">${esc(ini)}</div>
-    <div><strong>${esc(S.leader.marchio)}</strong><span class="powered"><img src="icone/icon-192.png" alt="">Powered by Campo Base</span></div></div>`;
+    <div><strong>${esc(S.leader.marchio)}</strong><span class="powered"><img src="icone/icon-192.png" alt="">Powered by Gruvia</span></div></div>`;
 }
 
 function indietro(href, testo) { return `<a class="indietro" href="${href}">‹ ${esc(testo)}</a>`; }
@@ -357,10 +357,10 @@ function messaggiDi(u) {
   const b = briefing(u);
   const giorno = dataLunga(u.data);
   return {
-    annuncio: `${u.titolo}: ${giorno}.\n${u.descrittore.charAt(0).toUpperCase() + u.descrittore.slice(1)}. ${C.numero(u.km)} km, +${u.dislivello} m, difficoltà ${u.dettagli.difficolta}.\nRitrovo ${u.oraPartenza.replace(":", ".")} a ${u.ritrovo.nome}. Quota ${u.prezzo} €, ${u.posti} posti.\nPer chiedere un posto: campobase.app/u/esempio\n${S.leader.marchio}`,
+    annuncio: `${u.titolo}: ${giorno}.\n${u.descrittore.charAt(0).toUpperCase() + u.descrittore.slice(1)}. ${C.numero(u.km)} km, +${u.dislivello} m, difficoltà ${u.dettagli.difficolta}.\nRitrovo ${u.oraPartenza.replace(":", ".")} a ${u.ritrovo.nome}. Quota ${u.prezzo} €, ${u.posti} posti.\nPer chiedere un posto: gruvia.app/u/esempio\n${S.leader.marchio}`,
     promemoria: `Ciao a tutti, ${giorno} si parte per ${u.titolo}.\nRitrovo alle ${u.oraPartenza} a ${u.ritrovo.nome}.\n${C.numero(u.km)} km e +${u.dislivello} m: scarponi, giacca impermeabile e 1,5 litri d'acqua.\nChi non l'ha ancora fatto, confermi la checklist dal suo link.\nA presto, ${S.leader.nome.split(" ")[0]}`,
     // Per WhatsApp Eventi: l'evento raccoglie il "ci sono"; la pagina dell'uscita tiene prezzo, condizioni, checklist ed esigenze.
-    evento: `TITOLO DELL'EVENTO\n${u.titolo} · ${dataBreve(u.data)}\n\nDESCRIZIONE\n${C.numero(u.km)} km, +${u.dislivello} m, difficoltà ${u.dettagli.difficolta}. Ritrovo ${u.oraPartenza} a ${u.ritrovo.nome}.\nQuota ${u.prezzo} €. Prezzo, condizioni di annullamento e checklist: campobase.app/u/esempio\nRispondere "ci sono" all'evento non conferma il posto: lo conferma ${S.leader.nome.split(" ")[0]}.`,
+    evento: `TITOLO DELL'EVENTO\n${u.titolo} · ${dataBreve(u.data)}\n\nDESCRIZIONE\n${C.numero(u.km)} km, +${u.dislivello} m, difficoltà ${u.dettagli.difficolta}. Ritrovo ${u.oraPartenza} a ${u.ritrovo.nome}.\nQuota ${u.prezzo} €. Prezzo, condizioni di annullamento e checklist: gruvia.app/u/esempio\nRispondere "ci sono" all'evento non conferma il posto: lo conferma ${S.leader.nome.split(" ")[0]}.`,
     giorno: `Buongiorno! Oggi ${u.titolo}. Ritrovo alle ${u.oraPartenza} a ${u.ritrovo.nome}.\nTramonto alle ${C.ora(b.tram)}: rientriamo entro le ${C.ora(b.limite)}.\nAvete acqua e strati caldi? Ci vediamo lì.`,
   };
 }
@@ -403,7 +403,7 @@ V.sentiero = (id) => {
       <span class="eti">Numeri utili</span>
       <div class="riga"><span>Numero unico di emergenza</span><b>112</b></div>
     </section>
-    <p class="nota">Campo Base non è un servizio di soccorso. Nella demo le presenze restano su questo telefono.</p>
+    <p class="nota">Gruvia non è un servizio di soccorso. Nella demo le presenze restano su questo telefono.</p>
   </div>`;
 };
 
@@ -444,7 +444,7 @@ V.pubblica = (id) => {
       <button class="btn primario" type="submit">${liberi > 0 ? "Chiedi un posto" : "Mettiti in lista d'attesa"}</button>
       <p class="nota">Non è un pagamento: ${esc(S.leader.nome.split(" ")[0])} ti conferma il posto su WhatsApp.</p>
     </form>
-    <div class="powered centrato"><img src="icone/icon-192.png" alt="">Powered by Campo Base</div>
+    <div class="powered centrato"><img src="icone/icon-192.png" alt="">Powered by Gruvia</div>
   </div>`;
 };
 
@@ -489,7 +489,7 @@ V.profilo = () => {
     <section class="box">
       <span class="eti">Titoli e zone</span>
       <p><b>${esc(L.titolo)}</b> <span class="chip c-info">dichiarato dal leader</span></p>
-      <p class="nota">Zone: ${esc(L.zone)}. Campo Base ricorda i titoli, non li certifica.</p>
+      <p class="nota">Zone: ${esc(L.zone)}. Gruvia ricorda i titoli, non li certifica.</p>
     </section>
     <section class="box">
       <span class="eti">Scadenzario</span>
@@ -497,7 +497,7 @@ V.profilo = () => {
     </section>
     <section class="box">
       <span class="eti">La tua pagina pubblica</span>
-      <p class="nota">Marchio in primo piano, "Powered by Campo Base" in piccolo, nessun tracciamento di terze parti.</p>
+      <p class="nota">Marchio in primo piano, "Powered by Gruvia" in piccolo, nessun tracciamento di terze parti.</p>
       <a class="btn secondario" href="#leader">Vedi la tua pagina pubblica</a>
     </section>
     <section class="box">
@@ -532,7 +532,7 @@ V.profilo = () => {
       <p class="nota">Tutto ciò che vedi è di esempio e resta solo in questo browser. Nessun dato viene inviato a un server.</p>
       <button class="btn secondario" data-azione="ripristina">Ripristina i dati di esempio</button>
     </section>
-    <p class="nota centrato">Campo Base · demo Fase 1A · versione 0.2</p>`;
+    <p class="nota centrato">Gruvia · demo Fase 1A · versione 0.2</p>`;
 };
 
 function nonTrovata() {
@@ -546,7 +546,7 @@ V.accesso = () => attesaLink
       <h1>Controlla la tua email</h1>
       <p>Abbiamo mandato un link di accesso a <b>${esc(attesaLink.email)}</b>. Vale 15 minuti e una sola volta.</p>
       <section class="box"><span class="eti">Email simulata della demo</span>
-        <p>"Ciao, tocca il pulsante per entrare in Campo Base."</p>
+        <p>"Ciao, tocca il pulsante per entrare in Gruvia."</p>
         <button class="btn primario" data-azione="apri-link">Apri il link di accesso</button></section>
       <button class="btn secondario" data-azione="cambia-email">Usa un'altra email</button></div>`
   : `<div class="accesso"><img src="icone/icon-192.png" alt="" class="logo-accesso">
@@ -576,7 +576,7 @@ V.leader = () => {
       ${archivio.length ? archivio.map((u) => `<div class="riga"><span>${esc(u.titolo)}</span><span class="nota">${esc(new Date(u.data + "T12:00").toLocaleDateString("it-IT", { month: "long", year: "numeric" }))}</span></div>`).join("") : `<p class="nota">Ancora nessuna.</p>`}
     </section>
     <section class="box"><span class="eti">Contatto</span><p>${esc(L.contatto)}</p></section>
-    <div class="powered centrato"><img src="icone/icon-192.png" alt="">Powered by Campo Base</div>
+    <div class="powered centrato"><img src="icone/icon-192.png" alt="">Powered by Gruvia</div>
   </div>`;
 };
 
@@ -599,7 +599,7 @@ V.p = (codice) => {
     </section>
     <button class="btn secondario testo-errore" data-azione="p-disdici" data-codice="${esc(codice)}">Non posso più venire</button>
     <p class="nota">Questo link è solo tuo: non inoltrarlo. Scade il ${esc(new Date(p.link.scade).toLocaleDateString("it-IT"))}.</p>
-    <div class="powered centrato"><img src="icone/icon-192.png" alt="">Powered by Campo Base</div>
+    <div class="powered centrato"><img src="icone/icon-192.png" alt="">Powered by Gruvia</div>
   </div>`;
 };
 

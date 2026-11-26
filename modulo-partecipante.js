@@ -203,7 +203,7 @@ function ptBoxPassaggi(u, p, codice) {
   const mio = p.passaggio;
   const altri = u.partecipanti.filter((q) => q !== p && q.stato === "confermato" && q.passaggio && q.passaggio.consenso);
   return `<section class="box"><span class="eti">Passaggi al ritrovo</span>
-    <p class="nota">I passaggi sono accordi privati tra partecipanti: ${esc(ptLeader())} e Campo Base non ne rispondono (orari, spese, assicurazione dell'auto).</p>
+    <p class="nota">I passaggi sono accordi privati tra partecipanti: ${esc(ptLeader())} e Gruvia non ne rispondono (orari, spese, assicurazione dell'auto).</p>
     ${altri.length ? altri.map((q) => `<div class="riga"><span><b>${esc(q.nome)}</b> ${q.passaggio.tipo === "offro" ? `offre ${q.passaggio.posti} ${q.passaggio.posti === 1 ? "posto" : "posti"}` : "cerca un passaggio"}${q.passaggio.da ? ` da ${esc(q.passaggio.da)}` : ""}</span><span>${esc(q.passaggio.contatto)}</span></div>`).join("") : `<p class="nota">Per ora nessuno offre o cerca un passaggio.</p>`}
     ${mio ? `<p class="testo-ok">${mio.tipo === "offro" ? `Offri ${mio.posti} ${mio.posti === 1 ? "posto" : "posti"}` : "Cerchi un passaggio"}${mio.da ? ` da ${esc(mio.da)}` : ""}. Contatto visibile agli altri iscritti: ${esc(mio.contatto)} (consenso del ${esc(new Date(mio.consenso).toLocaleString("it-IT", { dateStyle: "short", timeStyle: "short" }))}).</p>
       <button class="btn secondario" data-azione="pt-passaggio-ritira" data-codice="${esc(codice)}">Ritira e nascondi il contatto</button>`
@@ -378,7 +378,7 @@ V.domande = (id) => {
 V.posto = (codice) => {
   ptPulizia();
   const t = ptDaOfferta(codice);
-  const guscio = (corpo) => `<div class="pubblica">${corpo}<div class="powered centrato"><img src="icone/icon-192.png" alt="">Powered by Campo Base</div></div>`;
+  const guscio = (corpo) => `<div class="pubblica">${corpo}<div class="powered centrato"><img src="icone/icon-192.png" alt="">Powered by Gruvia</div></div>`;
   if (!t) return guscio(`<h1>Link non valido</h1><p>Il link non esiste o è stato sostituito. Chiedi a chi organizza l'uscita.</p>`);
   const { u, p } = t, o = p.offerta;
   const torna = `<a class="indietro" href="#partecipanti/${u.id}">‹ Torna all'app del leader (solo nella demo)</a>`;

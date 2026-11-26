@@ -1,4 +1,6 @@
-# Campo Base · web app demo
+# Gruvia · web app demo
+
+Nome e logo provvisori (Gruvia), scelti il 26/11/2026 in attesa della decisione della fondatrice. Il progetto resta "Campo Base" come nome interno di lavoro (D38).
 
 Demo installabile su Android (e iPhone) della Fase 1. **Solo dati di esempio**: tutto resta nel browser del telefono, nessun dato va a un server. Non inserire dati reali di partecipanti.
 
@@ -29,6 +31,6 @@ Poi apri http://localhost:5070.
 - `calcoli.js`: calcoli separati dall'interfaccia (GPX, tramonto, durata, break-even), riusabili nell'app vera.
 - `sw.js` e `manifest.webmanifest`: installazione e uso offline. A ogni pubblicazione cambiare `VERSIONE` in `sw.js`.
 - `font/`: Outfit e Inter salvati nell'app (licenza SIL OFL), niente chiamate a Google Fonts.
-- `icone/`: logo provvisorio, variante B "sole che sorge".
+- `icone/`: logo provvisorio di Gruvia (tre persone in fila sul sentiero, il leader davanti in lampone).
 
 Questa demo non è il codice di produzione: l'app vera seguirà le decisioni della Fase 0 (T02 linguaggio, T03 database, T06 hosting).

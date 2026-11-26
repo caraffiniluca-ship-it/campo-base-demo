@@ -150,7 +150,7 @@ function prSezioneTitoli() {
         <input id="pr-zone" name="zone" maxlength="120" value="${esc(L.zone)}">
         <button class="btn secondario" type="submit">Salva titoli e zone</button>
       </form>
-      <p class="nota">Ente: ${esc(L.ente || "non indicato")}. Zone: ${esc(L.zone)}. Tutto è dichiarato dal leader: Campo Base ricorda i titoli, non li verifica e non li certifica.</p>
+      <p class="nota">Ente: ${esc(L.ente || "non indicato")}. Zone: ${esc(L.zone)}. Tutto è dichiarato dal leader: Gruvia ricorda i titoli, non li verifica e non li certifica.</p>
     </section>`;
 }
 
@@ -194,7 +194,7 @@ function prSezioneAbbonamento() {
   let corpo;
   if (A.stato === "checkout") {
     corpo = `<div class="fumetto">Simulazione: nell'app vera qui si apre la pagina sicura del fornitore di pagamenti esterno, scelto in T10.
-Lì inserisci la carta. Campo Base riceve solo l'esito e lo stato dell'abbonamento: nessun dato di carta passa dall'app.</div>
+Lì inserisci la carta. Gruvia riceve solo l'esito e lo stato dell'abbonamento: nessun dato di carta passa dall'app.</div>
       <p>Piano scelto: <b>${esc(o.nome)} · ${esc(o.prezzo)}</b></p>
       <button class="btn primario" data-azione="pr-abb-paga">Simula il pagamento riuscito</button>
       <button class="btn secondario" data-azione="pr-abb-annulla">Torna indietro senza pagare</button>`;
@@ -347,7 +347,7 @@ V.feedback = (codice) => {
       ${mia ? `<p class="testo-ok">Hai già risposto: puoi cambiare il voto finché il link vale.</p>` : ""}
       <p class="nota">Lo legge solo ${esc(prPrimo(S.leader.nome))}, e solo insieme ad almeno altre 4 risposte, senza il tuo nome.</p>
     </form>
-    <div class="powered centrato"><img src="icone/icon-192.png" alt="">Powered by Campo Base</div>
+    <div class="powered centrato"><img src="icone/icon-192.png" alt="">Powered by Gruvia</div>
   </div>`;
 };
 
@@ -403,7 +403,7 @@ V.entra = (codice) => {
         <p class="nota">Titolare del trattamento: ${esc(S.leader.nome)}. Si registrano solo data, ora e versione dell'informativa. Informativa completa: link del leader (esempio nella demo).</p>
         <button class="btn primario" type="submit">Acconsento e continuo</button>
       </form>`}
-    <div class="powered centrato"><img src="icone/icon-192.png" alt="">Powered by Campo Base</div>
+    <div class="powered centrato"><img src="icone/icon-192.png" alt="">Powered by Gruvia</div>
   </div>`;
 };
 
@@ -456,7 +456,7 @@ V.struttura = (id) => {
       <label for="pr-s-note">Note (camere, accesso, pagamento)</label><textarea id="pr-s-note" name="note" rows="3" maxlength="400">${esc(s.note)}</textarea>
       <label for="pr-s-da">Dichiarato da *</label><input id="pr-s-da" name="dichiaratoDa" required maxlength="60" value="${esc(s.dichiaratoDa)}" placeholder="Es. gestore, al telefono">
       <button class="btn primario" type="submit">Salva la scheda</button>
-      <p class="nota">Al salvataggio la data di aggiornamento diventa oggi. Sono informazioni dichiarate: Campo Base non le verifica.</p>
+      <p class="nota">Al salvataggio la data di aggiornamento diventa oggi. Sono informazioni dichiarate: Gruvia non le verifica.</p>
     </form>
     <section class="box">
       <span class="eti">Allergeni e diete</span>

@@ -531,7 +531,7 @@
         ${soste.length ? `<span class="eti">Soste</span><ul class="cn-scaletta">${soste.map((s) => `<li>${esc(s)}</li>`).join("")}</ul>` : ""}
         ${spunti.length ? `<span class="eti">Cosa vedremo</span><ul class="cn-scaletta">${spunti.map((s) => `<li>${esc(s.testo)}</li>`).join("")}</ul>` : ""}
         <p class="nota">Durata stimata con km ÷ 4 + dislivello ÷ 400, da confermare. Quota, condizioni e iscrizione: ${esc(S.leader.contatto)}.</p>
-        <div class="powered"><img src="icone/icon-192.png" alt="">Powered by Campo Base</div>
+        <div class="powered"><img src="icone/icon-192.png" alt="">Powered by Gruvia</div>
       </article></div>`;
   };
 

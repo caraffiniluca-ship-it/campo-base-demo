@@ -149,7 +149,7 @@ const ModuloUscita = (() => {
     <section class="box">
       <span class="eti">Meteo</span>
       <div class="riga"><span>Aeronautica Militare</span><a class="btn secondario piccolo" href="${meteo}" target="_blank" rel="noopener noreferrer">Apri ↗</a></div>
-      <p class="nota">Campo Base non fa previsioni: apri la fonte ufficiale e registra quando l'hai consultata.</p>
+      <p class="nota">Gruvia non fa previsioni: apri la fonte ufficiale e registra quando l'hai consultata.</p>
       ${cons.length ? cons.map((c) => `<div class="riga nota"><span>${esc(quandoBreve(c.quando))} · ${esc(c.servizio || "Meteo")}</span><span>${c.nota ? `“${esc(c.nota)}”` : ""}</span></div>`).join("") : `<p class="nota">Meteo non ancora consultato per questa uscita.</p>`}
       <form class="in-linea" data-form="consultazione" data-id="${u.id}">
         <label class="visuale-nascosta" for="br-nota-meteo">Nota sulla consultazione</label>
@@ -360,7 +360,7 @@ const ModuloUscita = (() => {
     dati(u);
     const g = giorniA(u.data), k = conti(u);
     return `${testa(u, "Promemoria")}
-    <p class="nota">Promemoria per te, nei momenti previsti: compaiono anche in Oggi. Campo Base non scrive ai partecipanti: copi il testo e lo incolli nel gruppo.</p>
+    <p class="nota">Promemoria per te, nei momenti previsti: compaiono anche in Oggi. Gruvia non scrive ai partecipanti: copi il testo e lo incolli nel gruppo.</p>
     ${uscitaAttiva(u) ? "" : `<p class="testo-attenzione">L'uscita non è pubblicata: i promemoria partono quando la pubblichi.</p>`}
     ${MOMENTI.map((m) => {
       const st = statoMomento(m, g), fatto = !!u.promemoriaFatti[m.chiave];

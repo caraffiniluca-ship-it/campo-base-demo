@@ -49,7 +49,7 @@ async function fotoInMascotte(file) {
 
 // ---------- benvenuto: alla registrazione si scelgono nome e foto, e la mascotte prende il nome del leader ----------
 V.benvenuto = () => `<div class="accesso">
-  <h1>Benvenuto in Campo Base</h1>
+  <h1>Benvenuto in Gruvia</h1>
   <p>Due cose per iniziare. Il tuo nome diventa anche il nome della tua mascotte, l'assistente che risponde alle tue domande sulle uscite.</p>
   <form class="box modulo" data-form="benvenuto">
     <label for="bv-nome">Nome *</label>
