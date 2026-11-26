@@ -36,8 +36,9 @@ const Calcoli = (() => {
   function breakEven(prezzo, confermati, spese) {
     const totaleSpese = spese.reduce((s, v) => s + (Number(v.importo) || 0), 0);
     const ricavi = prezzo * confermati;
-    const pareggio = prezzo > 0 ? Math.ceil(totaleSpese / prezzo) : Infinity;
-    return { totaleSpese, ricavi, margine: ricavi - totaleSpese, pareggio, mancano: Math.max(0, pareggio - confermati) };
+    // Con prezzo 0 il pareggio esiste solo se non ci sono spese: altrimenti è null (non raggiungibile).
+    const pareggio = prezzo > 0 ? Math.ceil(totaleSpese / prezzo) : (totaleSpese > 0 ? null : 0);
+    return { totaleSpese, ricavi, margine: ricavi - totaleSpese, pareggio, mancano: pareggio === null ? null : Math.max(0, pareggio - confermati) };
   }
 
   function distanzaMetri(a, b) {
@@ -83,7 +84,7 @@ const Calcoli = (() => {
   }
 
   const ora = (d) => d ? d.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" }) : "—";
-  const durata = (ore) => `${Math.floor(ore)} h ${String(Math.round((ore % 1) * 60)).padStart(2, "0")}`;
+  const durata = (ore) => { const min = Math.round(ore * 60); return `${Math.floor(min / 60)} h ${String(min % 60).padStart(2, "0")}`; };
   const euro = (v) => v.toLocaleString("it-IT", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
   const numero = (v) => v.toLocaleString("it-IT");
 

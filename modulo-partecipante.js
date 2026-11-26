@@ -50,7 +50,8 @@ function ptRispondi(domanda, dati) {
       : nonSo;
   }
   // Salute e meteo: mai una risposta automatica.
-  if (ha("salut", "medic", "farmac", "malatt", "cuore", "gravidanz", "incint", "asma", "diabet", "meteo", "pioggia", "neve", "vento", "previsio")) return nonSo;
+  if (ha("salut", "medic", "farmac", "malatt", "cuore", "gravidanz", "incint", "asma", "diabet", "pression", "ginocch", "allerg", "pacemaker", "dolor", "male a", "mal di", "infortun", "operazion", "protesi", "schiena", "caviglia",
+    "meteo", "pioggia", "piove", "piover", "neve", "nevic", "vento", "previsio", "freddo", "caldo", "sole", "ghiaccio", "che tempo", "tempo fa", "tempo farà", "nebbia", "grandin")) return nonSo;
   const parti = [];
   if (ha("ritrovo", "dove ci", "dove si", "appuntamento", "parcheggi", "punto di incontro", "dove part")) parti.push(`Ritrovo a ${dati.ritrovo}, alle ${dati.oraPartenza} di ${dati.data}.`);
   if (ha("orari", "a che ora", "che ora", "quando", "partenza", "si parte", "rientr", "torn", "finisce", "durata", "quanto dura", "ore di cammino")) parti.push(`Partenza alle ${dati.oraPartenza} di ${dati.data}. Durata stimata ${dati.durata}, rientro previsto verso le ${dati.rientro} (stima: km ÷ 4 + dislivello ÷ 400).`);
@@ -160,7 +161,7 @@ function ptPulizia() {
       const prima = u.partecipanti.length;
       u.partecipanti = u.partecipanti.filter((p) => p.stato !== "lista");
       if (u.partecipanti.length !== prima) cambiato = true;
-    } else if (ptScadenze(u)) cambiato = true;
+    } else if (ptScadenze(u)) { ptOffriAutomatico(u); cambiato = true; }
     if (g < -CONSERVAZIONE_GIORNI && (u.domandeAperte?.length || u.ptDisdette?.length || u.ptRinunce?.length)) { u.domandeAperte = []; u.ptDisdette = []; u.ptRinunce = []; cambiato = true; }
   }
   if (cambiato) salva();
@@ -382,8 +383,8 @@ V.posto = (codice) => {
   if (!t) return guscio(`<h1>Link non valido</h1><p>Il link non esiste o è stato sostituito. Chiedi a chi organizza l'uscita.</p>`);
   const { u, p } = t, o = p.offerta;
   const torna = `<a class="indietro" href="#partecipanti/${u.id}">‹ Torna all'app del leader (solo nella demo)</a>`;
-  if (o.stato === "accettata") return guscio(`${torna}<h1>Posto già accettato</h1><p>Trovi tutto nel tuo link personale.</p>${p.link ? `<a class="btn primario" href="#p/${esc(p.link.codice)}">Apri la tua pagina</a>` : ""}`);
-  if (o.stato === "rifiutata") return guscio(`${torna}<h1>Hai rinunciato al posto</h1><p>Grazie di averlo detto: è passato al successivo in lista.</p>`);
+  if (o.stato === "accettata") return guscio(`${torna}<h1>Posto già accettato</h1><p>Trovi tutto nel tuo link personale, quello che ti ha mandato chi organizza l'uscita.</p>`);
+  if (o.stato === "rifiutata") return guscio(`${torna}<h1>Hai rinunciato al posto</h1><p>Grazie di averlo detto: il posto torna a chi è in lista d’attesa o a nuove iscrizioni.</p>`);
   if (o.stato === "scaduta" || Date.now() > o.scade) return guscio(`${torna}<h1>Offerta scaduta</h1><p>Il link valeva ${PT_ORE_OFFERTA} ore. Se vuoi ancora venire, scrivi a ${esc(ptLeader())}.</p>`);
   if (p.stato !== "lista") return guscio(`${torna}<h1>Posto già assegnato</h1><p>Risulti già tra gli iscritti.</p>`);
   return guscio(`${torna}
@@ -429,7 +430,7 @@ document.addEventListener("click", (e) => {
       uu.partecipanti = uu.partecipanti.filter((q) => q !== pp); delete uu.presenze[pp.id];
       const offerti = ptOffriAutomatico(uu);
       salva(); location.hash = `#pubblica/${uu.id}`;
-      avviso(offerti.length ? `Disdetta registrata: il posto è stato offerto a ${ptNome(offerti[0])} della lista d'attesa` : "Disdetta registrata: il posto torna libero");
+      avviso(offerti.length ? "Disdetta registrata: il posto passa alla lista d'attesa" : "Disdetta registrata: il posto torna libero");
       return;
     }
     if (a === "pt-passaggio-ritira") {

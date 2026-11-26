@@ -42,7 +42,7 @@ a { color: var(--prussia); }
 .powered { display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; color: var(--tenue); }
 .powered img { width: 16px; height: 16px; border-radius: 4px; }
 .centrato { justify-content: center; text-align: center; }
-.indietro { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--tenue); text-decoration: none; min-height: 32px; display: inline-flex; align-items: center; }
+.indietro { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--tenue); text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
 
 .box { background: var(--carta); border: 1px solid var(--linea); border-radius: var(--raggio); padding: 14px; display: flex; flex-direction: column; gap: 9px; color: inherit; text-decoration: none; }
 .box.prussia { background: var(--prussia); color: #fff; border: none; }
@@ -125,8 +125,8 @@ a { color: var(--prussia); }
   font: inherit; font-size: 16px; width: 100%; min-height: 48px; padding: 10px 12px; border: 1px solid #C5CEDB; border-radius: 12px; background: #fff; color: var(--testo); }
 .modulo textarea { resize: vertical; }
 .modulo input[type="file"] { padding: 10px; min-height: 0; }
-.spunta { display: flex; gap: 10px; align-items: flex-start; font-weight: 500 !important; }
-.spunta input { width: 22px; height: 22px; margin: 1px 0 0; accent-color: var(--prussia); flex: none; }
+.spunta { display: flex; gap: 10px; align-items: center; min-height: 44px; font-weight: 500 !important; }
+.spunta input { width: 24px; height: 24px; margin: 0; accent-color: var(--prussia); flex: none; }
 .due, .tre { display: grid; gap: 8px; } .due { grid-template-columns: 1fr 1fr; } .tre { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .due > div, .tre > div { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .in-linea { display: flex; gap: 8px; }

@@ -111,7 +111,8 @@ function prossimaUscita(testo) {
 function rispondi(domanda) {
   const q = domanda.toLowerCase();
   const u = prossimaUscita(q);
-  const ha = (...parole) => parole.some((p) => q.includes(p));
+  // Le parole si cercano a inizio parola: "vento" non scatta dentro "evento", "ferit" non dentro "preferita".
+  const ha = (...parole) => parole.some((p) => new RegExp(`(^|[^a-zàèéìòù])${p}`).test(q));
   if (ha("sicur", "pericol", "emergenz", "soccors", "incident", "ferit", "rischi")) {
     return { testo: "Sulla sicurezza non do indicazioni: valgono le tue procedure e il tuo giudizio. In emergenza il numero è il 112. Se vuoi, scrivi le istruzioni nella scheda dell'uscita e le riporterò così come le hai scritte.", fonte: "regola del progetto" };
   }
@@ -121,7 +122,7 @@ function rispondi(domanda) {
   }
   if (!u) return { testo: "Non hai uscite pubblicate in programma, quindi non ho dati su cui rispondere. Crea o pubblica un'uscita e riprova.", fonte: "elenco uscite", link: "#uscite" };
   const k = conti(u);
-  if (ha("manca", "mancano", "checklist", "non hanno", "conferm") && !ha("richiest", "da confermare")) {
+  if (ha("manca", "mancano", "checklist", "non hanno", "conferm") && !ha("richiest", "da confermare", "quanti", "quante", "pareggio")) {
     return k.senzaChecklist.length
       ? { testo: `Per ${u.titolo} non hanno ancora confermato la checklist: ${k.senzaChecklist.map((p) => p.nome).join(", ").replace(/\.$/, "")}. Dalla schermata Oggi copi il promemoria in un tocco.`, fonte: "iscritti dell'uscita", link: "#oggi" }
       : { testo: `Per ${u.titolo} tutti i confermati hanno visto la checklist.`, fonte: "iscritti dell'uscita" };
@@ -139,6 +140,7 @@ function rispondi(domanda) {
   }
   if (ha("pareggio", "break", "guadagn", "margine", "soldi", "conviene", "spese", "ricav")) {
     const be = C.breakEven(u.prezzo, k.confermati, u.spese);
+    if (be.pareggio === null) return { testo: `Per ${u.titolo} il prezzo è 0 e ci sono spese per ${C.euro(be.totaleSpese)}: il pareggio non è raggiungibile.`, fonte: "scheda dell'uscita", link: `#uscita/${u.id}` };
     return { testo: be.mancano ? `Per ${u.titolo} ti mancano ${be.mancano} iscritti al pareggio (${be.pareggio} servono, ne hai ${k.confermati}). Spese previste ${C.euro(be.totaleSpese)}.` : `Per ${u.titolo} sei oltre il pareggio: ricavi previsti ${C.euro(be.ricavi)}, spese ${C.euro(be.totaleSpese)}, margine ${C.euro(be.margine)}.`, fonte: "scheda e iscritti, nessun incasso registrato", link: `#uscita/${u.id}` };
   }
   if (ha("scriv", "messagg", "whatsapp", "gruppo", "promemoria", "annunc")) {

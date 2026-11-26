@@ -204,7 +204,7 @@ V.oggi = () => {
   }
   const k = conti(u), be = C.breakEven(u.prezzo, k.confermati, u.spese), b = briefing(u);
   const quando = giorniA(u.data) === 0 ? "oggi" : giorniA(u.data) === 1 ? "domani" : `tra ${giorniA(u.data)} giorni`;
-  const percConf = Math.min(100, (k.confermati / u.posti) * 100), percPar = Math.min(100, (be.pareggio / u.posti) * 100);
+  const percConf = Math.min(100, (k.confermati / u.posti) * 100), percPar = be.pareggio === null ? 100 : Math.min(100, (be.pareggio / u.posti) * 100);
   return `${intestazioneLeader()}
     <h1>Oggi, ${esc(oggiTxt)}</h1>
     <a class="box prussia" href="#uscita/${u.id}">
@@ -223,9 +223,9 @@ V.oggi = () => {
       <button class="btn secondario" data-azione="copia-promemoria" data-id="${u.id}">Copia il promemoria</button>` : `<p>Tutti i confermati hanno visto la checklist.</p>`}
     </section>
     <section class="box">
-      <div class="riga"><span class="eti">Break-even</span><b class="${be.mancano ? "testo-attenzione" : "testo-ok"}">${be.mancano ? `mancano ${be.mancano} iscritti` : `+${k.confermati - be.pareggio} oltre il pareggio`}</b></div>
-      <div class="barra" role="img" aria-label="${k.confermati} confermati su ${u.posti}, pareggio a ${be.pareggio}"><i style="width:${percConf}%"></i><em style="left:${percPar}%"></em></div>
-      <p class="nota">Pareggio a ${be.pareggio} iscritti: ${C.euro(u.prezzo)} × ${k.confermati} = ${C.euro(be.ricavi)}, spese ${C.euro(be.totaleSpese)}.</p>
+      <div class="riga"><span class="eti">Break-even</span><b class="${be.mancano !== 0 ? "testo-attenzione" : "testo-ok"}">${be.pareggio === null ? "non raggiungibile con prezzo 0" : be.mancano ? `mancano ${be.mancano} iscritti` : `+${k.confermati - be.pareggio} oltre il pareggio`}</b></div>
+      <div class="barra" role="img" aria-label="${k.confermati} confermati su ${u.posti}, pareggio ${be.pareggio === null ? "non raggiungibile" : `a ${be.pareggio}`}"><i style="width:${percConf}%"></i><em style="left:${percPar}%"></em></div>
+      <p class="nota">${be.pareggio === null ? "Pareggio non raggiungibile: con prezzo 0 le spese restano scoperte" : `Pareggio a ${be.pareggio} iscritti`}: ${C.euro(u.prezzo)} × ${k.confermati} = ${C.euro(be.ricavi)}, spese ${C.euro(be.totaleSpese)}.</p>
     </section>
     <section class="box">
       <div class="riga"><span class="eti">Briefing</span><span class="nota">calcolato dal GPX</span></div>
@@ -260,7 +260,7 @@ V.uscite = () => {
         const k = conti(u);
         return `<a class="box riga-uscita" href="#uscita/${u.id}">
           <div class="data-box"><b>${new Date(u.data + "T12:00").getDate()}</b><span>${new Date(u.data + "T12:00").toLocaleDateString("it-IT", { month: "short" })}</span></div>
-          <div class="testo"><strong>${esc(u.titolo)}</strong><span>${k.confermati}/${u.posti} confermati · ${C.numero(u.km)} km · ${u.dettagli.difficolta}</span></div>
+          <div class="testo"><strong>${esc(u.titolo)}</strong><span>${k.confermati}/${u.posti} confermati · ${C.numero(u.km)} km · ${esc(u.dettagli.difficolta)}</span></div>
           ${chipStato(statoEff(u))}</a>`;
       }).join("") : `<p class="vuoto">Nessuna uscita in questa scheda.</p>`}
     </div>
@@ -307,7 +307,7 @@ V.uscita = (id) => {
     <section class="box">
       <div class="riga"><span class="eti">Break-even</span><b class="${be.mancano ? "testo-attenzione" : "testo-ok"}">${C.euro(be.margine)}</b></div>
       ${u.spese.map((s) => `<div class="riga nota"><span>${esc(s.voce)}</span><span>${C.euro(s.importo)}</span></div>`).join("")}
-      <p class="nota">Ricavi previsti ${C.euro(u.prezzo)} × ${k.confermati} confermati = ${C.euro(be.ricavi)}. Pareggio a ${be.pareggio} iscritti. Nessun incasso è registrato nell'app.</p>
+      <p class="nota">Ricavi previsti ${C.euro(u.prezzo)} × ${k.confermati} confermati = ${C.euro(be.ricavi)}. ${be.pareggio === null ? "Pareggio non raggiungibile con prezzo 0" : `Pareggio a ${be.pareggio} iscritti`}. Nessun incasso è registrato nell'app.</p>
     </section>
     <section class="box">
       <span class="eti">Spunti sul territorio</span>
@@ -332,7 +332,7 @@ V.partecipanti = (id) => {
   const persone = [...u.partecipanti].sort((a, b) => ordine[a.stato] - ordine[b.stato]);
   return `${indietro(`#uscita/${u.id}`, u.titolo)}
     <h1>${esc(t("titolo_iscritti"))}</h1>
-    <div class="chips"><span class="chip c-ok">${k.confermati} confermati</span><span class="chip c-info">${k.richieste} richieste</span><span class="chip c-attenzione">${k.lista} in lista</span><span class="chip c-bozza">${u.posti - k.confermati} posti liberi</span></div>
+    <div class="chips"><span class="chip c-ok">${k.confermati} confermati</span><span class="chip c-info">${k.richieste} richieste</span><span class="chip c-attenzione">${k.lista} in lista</span><span class="chip c-bozza">${Math.max(0, u.posti - k.confermati)} posti liberi</span></div>
     <section class="box elenco-persone">
       ${persone.length ? persone.map((p) => `<div class="persona">
         <div class="ini">${esc(p.nome.split(" ").map((x) => x[0]).join("").slice(0, 2))}</div>
@@ -410,8 +410,10 @@ V.sentiero = (id) => {
 V.pubblica = (id) => {
   const u = uscita(id);
   if (!u) return nonTrovata();
-  const k = conti(u), liberi = u.posti - k.confermati;
-  return `<div class="pubblica">
+  const k = conti(u), liberi = Math.max(0, u.posti - k.confermati);
+  // Bozze, uscite concluse o annullate: la pagina pubblica non si apre (il leader la vede in anteprima).
+  if (u.stato !== "pubblicata" && !sessioneValida()) return `<div class="pubblica"><h1>Uscita non disponibile</h1><p>Questa uscita non è aperta alle iscrizioni. Chiedi a chi organizza.</p></div>`;
+  return `<div class="pubblica">${u.stato !== "pubblicata" ? `<p class="nota testo-attenzione">Anteprima per il leader: l'uscita non è pubblicata, chi apre il link non la vede.</p>` : ""}
     <a class="indietro" href="#uscita/${u.id}">‹ Torna all'app del leader</a>
     <div class="leader"><div class="avatar">${esc(S.leader.marchio.split(" ").map((p) => p[0]).filter((c) => /[A-Z]/.test(c)).slice(0, 2).join(""))}</div>
       <div><strong>${esc(S.leader.marchio)}</strong><span class="nota">${esc(S.leader.titolo)} (dichiarato)</span></div></div>
@@ -609,7 +611,7 @@ function mostra() {
   let [sez, id] = (location.hash.slice(1) || "oggi").split("/");
   if (!PUBBLICHE.includes(sez) && !sessioneValida()) sez = "accesso";
   if (sez === "nuova") window._inizioCreazione = Date.now();
-  const vista = V[sez] || V.oggi;
+  const vista = (Object.prototype.hasOwnProperty.call(V, sez) && typeof V[sez] === "function") ? V[sez] : V.oggi;
   const app = document.getElementById("app");
   app.innerHTML = vista(id);
   const sezNav = { oggi: "oggi", profilo: "profilo", assistente: "oggi", benvenuto: "profilo" }[sez] || "uscite";
@@ -658,6 +660,8 @@ document.addEventListener("click", (e) => {
     case "elimina-account":
       if (el.dataset.conferma !== "si") { el.dataset.conferma = "si"; el.textContent = "Tocca di nuovo: cancella tutto"; return; }
       try { localStorage.removeItem(CHIAVE); } catch (err) { /* niente da cancellare */ }
+      try { if (window.indexedDB) indexedDB.deleteDatabase("campobase-contenuti"); } catch (err) { /* nessun file salvato */ }
+      LINGUA = "it";
       S = datiDemo(); S.account = null; S.eventi = { accessi: 0, usciteCreate: 0, tempiCreazione: [], messaggiCopiati: 0, richiesteRicevute: 0 };
       salva(); location.hash = "#oggi"; mostra(); avviso("Account e dati eliminati"); return;
     case "apri-link":
@@ -694,11 +698,18 @@ document.addEventListener("click", (e) => {
     }
     case "concludi": u.stato = "conclusa"; avviso("Uscita spostata in archivio"); break;
     case "duplica": {
-      const copiaU = JSON.parse(JSON.stringify(u));
-      Object.assign(copiaU, { id: nuovoId(), stato: "bozza", data: prossimoGiorno(6, 3), partecipanti: [], presenze: {}, consultazioni: [] });
+      // Si copiano solo i dati della scheda: niente iscritti, feedback, foto, presenze o dati dei moduli.
+      const SCHEDA = ["titolo", "descrittore", "oraPartenza", "ritrovo", "km", "dislivello", "attivita", "lingua", "dettagli", "prezzo", "posti", "condizioni", "spese", "minimo", "checklist"];
+      const copiaU = JSON.parse(JSON.stringify(Object.fromEntries(SCHEDA.filter((c) => c in u).map((c) => [c, u[c]]))));
+      Object.assign(copiaU, { id: nuovoId(), stato: "bozza", data: prossimoGiorno(6, 3), partecipanti: [], presenze: {}, consultazioni: [], spunti: [] });
       S.uscite.push(copiaU); salva(); location.hash = `#modifica/${copiaU.id}`; avviso("Bozza creata dall'archivio"); return;
     }
-    case "ripristina": { const acc = S.account, ev = S.eventi; S = datiDemo(); S.account = acc; S.eventi = ev; avviso("Dati di esempio ripristinati"); break; }
+    case "ripristina": {
+      if (el.dataset.conferma !== "si") { el.dataset.conferma = "si"; el.textContent = "Tocca di nuovo per ripristinare"; return; }
+      // Si tengono account, profilo (nome, attività, mascotte) e lingua: si rimettono solo le uscite di esempio.
+      const acc = S.account, ev = S.eventi, lingua = S.lingua, leader = S.leader;
+      S = datiDemo(); S.account = acc; S.eventi = ev; S.lingua = lingua; S.leader = leader; LINGUA = lingua || "it";
+      avviso("Uscite di esempio ripristinate"); break; }
     default: return;
   }
   salva(); mostra();
@@ -723,6 +734,7 @@ document.addEventListener("submit", (e) => {
   }
 
   if (f.dataset.form === "richiesta") {
+    if (!u || u.stato !== "pubblicata") { avviso("Questa uscita non accetta iscrizioni."); return; }
     const nome = dati.nome.trim().slice(0, 40);
     if (!nome) { avviso("Scrivi il tuo nome per chiedere il posto."); return; }
     // Una seconda richiesta con lo stesso nome viene unita alla prima (F26).
@@ -743,16 +755,21 @@ document.addEventListener("submit", (e) => {
     if (!dati.titolo.trim()) errori.push("titolo");
     if (!dati.data) errori.push("data");
     if (!dati.ritrovo.trim()) errori.push("ritrovo");
-    if (!(num(dati.km) > 0)) errori.push("km");
-    if (!(num(dati.dislivello) >= 0)) errori.push("dislivello");
-    if (!(num(dati.prezzo) >= 0)) errori.push("prezzo");
-    if (!(num(dati.posti) >= 1)) errori.push("posti");
+    if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(dati.oraPartenza || "")) errori.push("ora di partenza");
+    const entro = (v, min, max) => Number.isFinite(num(v)) && num(v) >= min && num(v) <= max;
+    if (!entro(dati.km, 0.1, 200)) errori.push("km (fino a 200)");
+    if (!entro(dati.dislivello, 0, 9000)) errori.push("dislivello (fino a 9000 m)");
+    if (!entro(dati.prezzo, 0, 5000)) errori.push("prezzo (fino a 5000 €)");
+    if (!(entro(dati.posti, 1, 200) && Number.isInteger(num(dati.posti)))) errori.push("posti (numero intero)");
+    else if (u && num(dati.posti) < conti(u).confermati) errori.push(`posti (hai già ${conti(u).confermati} confermati)`);
     if (!dati.condizioni.trim()) errori.push("condizioni di annullamento");
     const box = document.getElementById("errori-modulo");
     if (errori.length) { box.hidden = false; box.textContent = `Completa questi campi: ${errori.join(", ")}.`; box.scrollIntoView({ block: "center" }); return; }
     const spese = dati.spese.split("\n").map((r) => r.trim()).filter(Boolean).map((r) => {
-      const m = r.match(/^(.*?)[\s:]+(\d+(?:[.,]\d+)?)\s*€?$/);
-      return m ? { voce: m[1].slice(0, 60), importo: Number(m[2].replace(",", ".")) } : { voce: r.slice(0, 60), importo: 0 };
+      const m = r.match(/^(.*?)[\s:]+(\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:[.,]\d+)?)\s*€?$/);
+      // "1.000" e "1.000,50" sono migliaia all'italiana; "12.5" e "12,5" sono decimali.
+      const importo = (t) => /^\d{1,3}(\.\d{3})+(,\d+)?$/.test(t) ? Number(t.replace(/\./g, "").replace(",", ".")) : Number(t.replace(",", "."));
+      return m ? { voce: m[1].slice(0, 60), importo: Math.min(importo(m[2]), 100000) } : { voce: r.slice(0, 60), importo: 0 };
     });
     const valori = {
       titolo: dati.titolo.trim(), descrittore: dati.descrittore.trim(), data: dati.data, oraPartenza: dati.oraPartenza,
@@ -807,6 +824,8 @@ window.addEventListener("DOMContentLoaded", () => { carica(); mostra(); });
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
   // Quando arriva una versione nuova dell'app, la pagina si ricarica una volta da sola.
+  // Alla prima visita non c'è niente da aggiornare: si ricarica solo se una versione precedente era già attiva.
   let ricaricata = false;
-  navigator.serviceWorker.addEventListener("controllerchange", () => { if (!ricaricata) { ricaricata = true; location.reload(); } });
+  const avevaController = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.addEventListener("controllerchange", () => { if (avevaController && !ricaricata) { ricaricata = true; location.reload(); } });
 }

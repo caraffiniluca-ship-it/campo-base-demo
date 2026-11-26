@@ -135,7 +135,7 @@
   // Divide in frasi e poi in pezzi separati da virgola; pezzi vicini dello stesso argomento si riuniscono (es. un elenco di cose da portare).
   function frasiDi(testo) {
     const viste = new Set(), out = [];
-    const frasi = String(testo || "").replace(/\s+/g, " ").split(/(?<=[.!?])\s+|\s*\b(?:e poi|poi|inoltre|un'altra cosa|altra cosa|ah,? e)\b\s*/i);
+    const frasi = String(testo || "").replace(/\s+/g, " ").replace(/([.!?]) /g, "$1\n").split(/\n|\s*\b(?:e poi|poi|inoltre|un'altra cosa|altra cosa|ah,? e)\b\s*/i);
     for (const frase of frasi) {
       let prec = null;
       for (const pezzo of frase.split(/,\s+/).map(pulisciFrase).filter((x) => x.length > 2)) {
