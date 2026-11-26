@@ -113,6 +113,10 @@ a { color: var(--prussia); }
 .persona:last-child { border-bottom: 0; }
 .ini { width: 34px; height: 34px; border-radius: 50%; background: var(--morbido); color: var(--prussia); display: grid; place-items: center; font-weight: 700; font-size: 13px; flex: none; }
 .azioni-persona { display: flex; gap: 4px; align-items: center; flex: none; }
+/* Iscritti: con più azioni i pulsanti vanno sotto il nome, così il nome resta leggibile */
+.elenco-persone .persona { flex-wrap: wrap; }
+.elenco-persone .persona .testo { flex: 1 1 0; }
+.elenco-persone .azioni-persona { width: 100%; justify-content: flex-end; flex-wrap: wrap; margin-top: -4px; }
 
 .fumetto { background: #DCF8C6; color: #1C2A1C; border-radius: 16px 16px 4px 16px; padding: 12px 14px; font-size: 15px; white-space: pre-line; line-height: 1.5; }
 

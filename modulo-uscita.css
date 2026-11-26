@@ -1,0 +1,6 @@
+/* Modulo uscita (F70 timeline, F66 aderenti, F89 zaino): solo regole nuove con i token esistenti. */
+.us-giorno { margin-top: 6px; }
+.us-tappa { border-left: 3px solid var(--prussia); padding: 2px 0 2px 12px; display: flex; flex-direction: column; gap: 4px; }
+.us-voce { border-top: 1px solid var(--linea); padding-top: 8px; }
+.us-voce:first-of-type { border-top: 0; padding-top: 0; }
+[data-azione="us-extra-ader"][aria-pressed="true"] { background: var(--prussia); color: #fff; }
