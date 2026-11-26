@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="110 75 380 380" width="512" height="512"><defs><clipPath id="c"><circle cx="300" cy="265" r="190"/></clipPath></defs><circle cx="300" cy="265" r="190" fill="#FFF8E9"/><g clip-path="url(#c)">
+  <!-- ombra a terra -->
+  <ellipse cx="300" cy="868" rx="190" ry="18" fill="#000" opacity="0.12"/>
+
+  <!-- palo con il segnaposto Campo Base -->
+  <rect x="140" y="150" width="16" height="712" rx="8" fill="#AEB6BE"/>
+  <rect x="144" y="150" width="4" height="712" rx="2" fill="#E3E8EC"/>
+  <g transform="translate(148 92)">
+    <path d="M0 64 C0 64 -40 22 -40 -8 A40 40 0 1 1 40 -8 C40 22 0 64 0 64 Z" fill="#EE7523" stroke="#fff" stroke-width="5"/>
+    <circle cx="0" cy="-8" r="15" fill="#fff"/>
+    <circle cx="0" cy="-8" r="6" fill="#EE7523"/>
+  </g>
+
+  <!-- capelli lunghi dietro la testa -->
+  <path d="M212 210 C186 250 196 300 188 340 C180 380 200 410 214 440 L250 430 C236 400 238 360 240 320 Z" fill="#33241B"/>
+  <path d="M390 205 C420 250 404 300 414 345 C424 390 404 425 392 452 L350 440 C366 405 362 365 360 320 Z" fill="#33241B"/>
+  <path d="M200 300 C196 330 204 360 200 392" stroke="#5A4232" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M404 300 C410 335 402 365 406 400" stroke="#5A4232" stroke-width="4" fill="none" stroke-linecap="round"/>
+
+  <!-- gambe: pantaloni da trekking -->
+  <path d="M214 630 L388 630 L396 828 L314 828 L301 700 L288 828 L206 828 Z" fill="#6E737D"/>
+  <path d="M301 660 L301 700" stroke="#565A63" stroke-width="4"/>
+  <path d="M318 735 L392 730 L395 800 L322 806 Z" fill="#26272B"/>
+  <path d="M336 748 L360 760" stroke="#55575d" stroke-width="3" stroke-linecap="round"/>
+  <path d="M226 660 L262 664 L258 704 L222 700 Z" fill="#565A63"/>
+  <path d="M370 662 L384 662" stroke="#EE7523" stroke-width="5" stroke-linecap="round"/>
+  <path d="M212 760 L286 762" stroke="#565A63" stroke-width="3" stroke-dasharray="6 6"/>
+
+  <!-- scarponi -->
+  <path d="M204 820 L290 820 L296 848 C296 858 288 862 278 862 L190 862 C178 862 176 850 186 842 Z" fill="#5B4F45"/>
+  <path d="M312 820 L398 820 L414 842 C424 850 422 862 410 862 L322 862 C312 862 304 858 304 848 Z" fill="#5B4F45"/>
+  <rect x="184" y="854" width="114" height="10" rx="5" fill="#2E2823"/>
+  <rect x="302" y="854" width="114" height="10" rx="5" fill="#2E2823"/>
+  <path d="M220 832 L262 832 M318 832 L360 832" stroke="#EE7523" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- collo -->
+  <rect x="274" y="338" width="52" height="66" rx="14" fill="#DFA27A"/>
+
+  <!-- busto: pile lime con zip -->
+  <path d="M222 404 C250 388 350 388 378 404 C392 470 398 560 396 642 C330 660 270 660 204 642 C202 560 208 470 222 404 Z" fill="#A8CB35"/>
+  <path d="M378 404 C392 470 398 560 396 642 C380 646 368 648 356 650 C366 560 364 470 352 396 Z" fill="#86A824" opacity="0.55"/>
+  <path d="M238 470 C250 540 248 600 244 646 M362 470 C352 540 354 600 358 648" stroke="#8C9C72" stroke-width="3" stroke-dasharray="7 6" fill="none"/>
+  <path d="M210 610 C270 626 330 626 392 610" stroke="#8C9C72" stroke-width="3" stroke-dasharray="7 6" fill="none"/>
+  <path d="M258 396 C276 420 324 420 342 396 L338 372 C320 388 280 388 262 372 Z" fill="#86A824"/>
+  <path d="M300 412 L300 486" stroke="#5f6a56" stroke-width="5" stroke-linecap="round"/>
+  <rect x="294" y="480" width="12" height="20" rx="4" fill="#4a5244"/>
+
+  <!-- cordino blu e badge da guida -->
+  <path d="M272 398 L316 548 M330 398 L322 548" stroke="#2D63D8" stroke-width="7" stroke-linecap="round" fill="none"/>
+  <rect x="312" y="540" width="20" height="16" rx="3" fill="#dfe4ea"/>
+  <g transform="rotate(-4 322 586)">
+    <rect x="280" y="554" width="86" height="62" rx="8" fill="#fff" stroke="#2D63D8" stroke-width="4"/>
+    <rect x="280" y="554" width="86" height="18" rx="6" fill="#2D63D8"/>
+    <text x="323" y="568" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">GUIDA</text>
+    <text x="314" y="593" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#03574A" text-anchor="middle">ENRICO</text>
+    <path d="M354 608 C354 608 348 602 348 598 A6 6 0 1 1 360 598 C360 602 354 608 354 608 Z" fill="#EE7523"/>
+    <circle cx="354" cy="598" r="2.2" fill="#fff"/>
+  </g>
+
+  <!-- braccio sinistro che stringe il palo -->
+  <path d="M226 428 C196 444 176 462 164 484" stroke="#A8CB35" stroke-width="56" stroke-linecap="round" fill="none"/>
+  <path d="M226 428 C210 436 196 446 186 458" stroke="#C3DE5E" stroke-width="10" stroke-linecap="round" fill="none" opacity="0.6"/>
+  <ellipse cx="150" cy="488" rx="30" ry="26" fill="#F0BD96"/>
+  <path d="M134 474 C146 470 160 472 168 478 M132 488 C146 484 160 486 170 492 M136 502 C148 498 160 500 168 506" stroke="#B9774F" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+  <!-- braccio destro che saluta, con orologio sportivo -->
+  <path d="M374 430 C430 432 456 400 458 336" stroke="#A8CB35" stroke-width="54" stroke-linecap="round" fill="none"/>
+  <path d="M384 428 C420 426 440 408 448 380" stroke="#C3DE5E" stroke-width="10" stroke-linecap="round" fill="none" opacity="0.6"/>
+  <rect x="434" y="316" width="48" height="22" rx="8" fill="#26272B"/>
+  <circle cx="458" cy="327" r="15" fill="#1b1c20" stroke="#5b5e66" stroke-width="3"/>
+  <circle cx="458" cy="327" r="8" fill="#29B3A6"/>
+  <g transform="rotate(8 458 270)">
+    <ellipse cx="458" cy="280" rx="32" ry="36" fill="#F0BD96"/>
+    <rect x="428" y="216" width="14" height="46" rx="7" fill="#F0BD96"/>
+    <rect x="444" y="206" width="14" height="52" rx="7" fill="#F0BD96"/>
+    <rect x="460" y="208" width="14" height="50" rx="7" fill="#F0BD96"/>
+    <rect x="476" y="220" width="13" height="42" rx="6.5" fill="#F0BD96"/>
+    <path d="M428 284 C414 274 410 258 418 252 C426 248 434 262 440 272" fill="#F0BD96"/>
+    <path d="M442 262 L442 240 M458 258 L458 232 M474 258 L474 236" stroke="#B9774F" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
+  </g>
+  <path d="M500 230 C512 244 514 262 508 280 M516 214 C534 236 536 268 524 294" stroke="#EE7523" stroke-width="5" stroke-linecap="round" fill="none" opacity="0.8"/>
+
+  <!-- orecchie -->
+  <ellipse cx="214" cy="262" rx="15" ry="22" fill="#DFA27A"/>
+  <ellipse cx="386" cy="262" rx="15" ry="22" fill="#DFA27A"/>
+
+  <!-- viso -->
+  <path d="M216 226 C214 300 236 342 272 360 C290 370 310 370 328 360 C364 342 386 300 384 226 C382 162 344 140 300 140 C256 140 218 162 216 226 Z" fill="#F0BD96"/>
+  <path d="M232 300 C240 330 256 350 272 360 C258 340 248 320 244 296 Z" fill="#DFA27A" opacity="0.5"/>
+  <path d="M368 300 C360 330 344 350 328 360 C342 340 352 320 356 296 Z" fill="#DFA27A" opacity="0.5"/>
+  <circle cx="252" cy="292" r="15" fill="#E88A72" opacity="0.35"/>
+  <circle cx="348" cy="292" r="15" fill="#E88A72" opacity="0.35"/>
+
+  <!-- rughe d'espressione sulla fronte -->
+  <path d="M262 214 C286 208 314 208 338 214 M272 226 C292 222 310 222 328 226" stroke="#B9774F" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.45"/>
+
+  <!-- sopracciglia -->
+  <path d="M244 240 C254 230 272 228 284 236" stroke="#33241B" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <path d="M316 236 C328 228 346 230 356 240" stroke="#33241B" stroke-width="8" fill="none" stroke-linecap="round"/>
+
+  <!-- occhi sorridenti -->
+  <ellipse cx="266" cy="262" rx="15" ry="13" fill="#fff"/>
+  <ellipse cx="334" cy="262" rx="15" ry="13" fill="#fff"/>
+  <circle cx="269" cy="263" r="9" fill="#3A2A1F"/>
+  <circle cx="337" cy="263" r="9" fill="#3A2A1F"/>
+  <circle cx="272" cy="259" r="3.2" fill="#fff"/>
+  <circle cx="340" cy="259" r="3.2" fill="#fff"/>
+  <path d="M250 268 C256 276 274 278 282 270" stroke="#B9774F" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.6"/>
+  <path d="M318 270 C326 278 344 276 350 268" stroke="#B9774F" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.6"/>
+  <path d="M240 262 L232 258 M241 270 L232 272 M360 262 L368 258 M359 270 L368 272" stroke="#B9774F" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
+
+  <!-- naso -->
+  <path d="M302 266 C300 282 292 296 290 302 C296 308 306 308 312 302" stroke="#B9774F" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+
+  <!-- pizzetto brizzolato, baffi e sorriso -->
+  <path d="M262 318 C270 310 286 306 300 310 C314 306 330 310 338 318 C346 334 340 350 332 362 C324 386 312 404 300 410 C288 404 276 386 268 362 C260 350 254 334 262 318 Z" fill="#3E3833"/>
+  <path d="M276 362 C282 380 290 394 300 402 M300 362 L300 404 M324 362 C318 380 310 394 300 402" stroke="#B9B2AA" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.85"/>
+  <path d="M268 340 L272 352 M332 340 L328 352 M286 372 L288 384 M314 372 L312 384" stroke="#B9B2AA" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
+  <path d="M276 330 C286 352 314 352 324 330 C312 336 288 336 276 330 Z" fill="#7A2E2A"/>
+  <path d="M280 331 C292 337 308 337 320 331 L318 338 C306 342 294 342 282 338 Z" fill="#fff"/>
+  <path d="M266 324 C278 318 292 318 300 322 C308 318 322 318 334 324 C326 328 312 328 300 326 C288 328 274 328 266 324 Z" fill="#2E2925"/>
+
+  <!-- bandana rossa annodata, con la coda che scende sul lato -->
+  <path d="M380 196 C432 230 448 300 438 392 C426 412 406 410 394 398 C404 326 396 268 366 222 Z" fill="#C0392F"/>
+  <path d="M412 260 C426 300 428 350 422 398" stroke="#8F2621" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.7"/>
+  <path d="M398 250 C408 290 410 340 404 392" stroke="#D85A4E" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.6"/>
+  <path d="M206 232 C196 160 240 112 300 110 C362 110 404 152 396 230 C366 210 336 202 300 202 C264 202 234 210 206 232 Z" fill="#C0392F"/>
+  <path d="M206 232 C234 210 264 202 300 202 C336 202 366 210 396 230 L392 242 C364 224 334 216 300 216 C266 216 236 224 210 244 Z" fill="#8F2621"/>
+  <path d="M244 136 C270 124 312 122 342 134" stroke="#D85A4E" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.7"/>
+  <path d="M232 170 C262 156 300 154 330 160 M350 150 C372 166 384 190 386 214" stroke="#8F2621" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.5"/>
+  <ellipse cx="388" cy="206" rx="20" ry="16" fill="#8F2621"/>
+  <ellipse cx="384" cy="202" rx="11" ry="8" fill="#C0392F"/>
+
+  <!-- ciocche di capelli che escono dalla bandana -->
+  <path d="M214 236 C206 256 208 276 214 292 C218 276 220 256 224 242 Z" fill="#33241B"/>
+  <path d="M386 236 C394 256 392 276 386 292 C382 276 380 256 376 242 Z" fill="#33241B"/>
+</g><circle cx="300" cy="265" r="184" fill="none" stroke="#EE7523" stroke-width="10"/></svg>
