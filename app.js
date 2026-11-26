@@ -688,8 +688,14 @@ document.addEventListener("click", (e) => {
       if (el.dataset.conferma !== "si") { el.dataset.conferma = "si"; el.textContent = "Sicuro?"; el.classList.add("pericolo"); return; }
       u.partecipanti = u.partecipanti.filter((x) => x !== p); delete u.presenze[p.id]; avviso("Persona cancellata da questa uscita"); break;
     case "presenza": u.presenze[p.id] = !u.presenze[p.id]; break;
-    case "convalida": { const s = u.spunti.find((x) => x.id === Number(el.dataset.spunto)); s.stato = "convalidato"; s.fonte = "Conoscenza diretta del leader"; break; }
-    case "scarta": u.spunti = u.spunti.filter((x) => x.id !== Number(el.dataset.spunto)); break;
+    case "convalida": {
+      const s = u.spunti.find((x) => x.id === Number(el.dataset.spunto)); if (!s) return;
+      // Con numeri o date serve una fonte: si passa alla schermata Soste, dove si scrive.
+      if (/\d/.test(s.testo)) { location.hash = `#soste/${u.id}`; avviso("Lo spunto contiene numeri o date: aggiungi la fonte prima di convalidare."); return; }
+      s.stato = "convalidato"; s.fonte = "Conoscenza diretta del leader"; break; }
+    case "scarta":
+      if (el.dataset.conferma !== "si") { el.dataset.conferma = "si"; el.textContent = "Tocca di nuovo per scartare"; el.classList.add("pericolo"); return; }
+      u.spunti = u.spunti.filter((x) => x.id !== Number(el.dataset.spunto)); break;
     case "pubblica": {
       const manca = ["titolo", "data", "prezzo", "posti", "condizioni"].filter((c) => !u[c] && u[c] !== 0);
       if (!u.dettagli?.difficolta) manca.push("difficolta");

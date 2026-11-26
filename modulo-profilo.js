@@ -419,7 +419,7 @@ V.rubrica = () => {
       ${R.length ? R.map((c) => `<div class="persona">
         <div class="testo"><strong>${esc(c.nome)}</strong>
           <span>${esc(PR_TIPI[c.tipo] || "Altro")}${c.telefono ? " · " + esc(c.telefono) : ""}${c.email ? " · " + esc(c.email) : ""}${c.nota ? " · " + esc(c.nota) : ""} · in ${usi(c)} uscite</span>
-          ${PR_STRUTTURE.includes(c.tipo) ? `<span>${c.struttura ? `Scheda aggiornata il ${esc(prData(c.struttura.aggiornata))}, dichiarato da ${esc(c.struttura.dichiaratoDa)}` : "Scheda struttura da compilare"}</span>` : ""}
+          ${PR_STRUTTURE.includes(c.tipo) ? `<span>${c.struttura && c.struttura.aggiornata ? `Scheda aggiornata il ${esc(prData(c.struttura.aggiornata))}, dichiarato da ${esc(c.struttura.dichiaratoDa)}` : "Scheda struttura da compilare"}</span>` : ""}
         </div>
         <div class="azioni-persona">
           ${PR_STRUTTURE.includes(c.tipo) ? `<a class="btn secondario piccolo" href="#struttura/${c.id}">Scheda</a>` : ""}
@@ -489,7 +489,7 @@ V.logistica = (id) => {
     ${R.filter((c) => scelti.includes(c.id) && PR_STRUTTURE.includes(c.tipo)).map((c) => `<section class="box">
       <div class="riga"><span class="eti">${esc(c.nome)}</span><a class="btn secondario piccolo" href="#struttura/${c.id}">Scheda</a></div>
       ${c.struttura ? `<p>${c.struttura.servizi.map(esc).join(" · ") || "Nessun servizio spuntato"}</p>
-        <p class="nota">${c.struttura.orarioCena ? "Cena " + esc(c.struttura.orarioCena) + " · " : ""}Aggiornata il ${esc(prData(c.struttura.aggiornata))}, dichiarato da ${esc(c.struttura.dichiaratoDa)}.${c.struttura.allergeni ? " Allergeni: confermati direttamente." : ""}</p>` : `<p class="nota">Scheda da compilare.</p>`}
+        <p class="nota">${c.struttura.orarioCena ? "Cena " + esc(c.struttura.orarioCena) + " · " : ""}${c.struttura.aggiornata ? `Aggiornata il ${esc(prData(c.struttura.aggiornata))}, dichiarato da ${esc(c.struttura.dichiaratoDa)}.` : "Scheda dei servizi da compilare."}${c.struttura.allergeni ? " Allergeni: confermati direttamente." : ""}</p>` : `<p class="nota">Scheda da compilare.</p>`}
     </section>`).join("")}
     <section class="box">
       <span class="eti">Camere</span>
@@ -611,7 +611,7 @@ document.addEventListener("click", (e) => {
       Object.assign(A, { stato: "attivo", dal, rinnovo: prDopoMesi(dal, o.mesi), disdetto: null });
       avviso("Simulazione: abbonamento attivo. Nessun pagamento reale"); break;
     }
-    case "pr-abb-annulla": L.abbonamento.stato = L.abbonamento.prima || "nessuno"; avviso("Nessun pagamento: torni al profilo"); break;
+    case "pr-abb-annulla": L.abbonamento.stato = L.abbonamento.prima || "nessuno"; if (L.abbonamento.sceltaPrima !== undefined) L.abbonamento.scelta = L.abbonamento.sceltaPrima; avviso("Nessun pagamento: torni al profilo"); break;
     case "pr-abb-disdici":
       if (!prDueTocchi(el, "Tocca di nuovo per disdire")) return;
       Object.assign(L.abbonamento, { stato: "disdetto", disdetto: new Date().toISOString() }); avviso("Abbonamento disdetto: resta attivo fino al rinnovo"); break;
@@ -638,7 +638,7 @@ document.addEventListener("click", (e) => {
       for (const x of S.uscite) { if (x.fornitori) x.fornitori = x.fornitori.filter((f) => f !== c.id); if (x.camere && x.camere.struttura === c.id) x.camere.struttura = null; }
       avviso("Contatto cancellato dalla rubrica e dalle uscite"); break;
     }
-    case "pr-allergeni-togli": { const c = prContatto(el.dataset.c); if (!c || !c.struttura) return; c.struttura.allergeni = null; avviso("Informazione sugli allergeni tolta"); break; }
+    case "pr-allergeni-togli": { const c = prContatto(el.dataset.c); if (!c || !c.struttura || !prDueTocchi(el, "Sicuro?")) return; c.struttura.allergeni = null; avviso("Informazione sugli allergeni tolta"); break; }
     case "pr-proponi": {
       if (!u) return;
       u.camere ??= { struttura: null, capienze: [] };
@@ -652,6 +652,7 @@ document.addEventListener("click", (e) => {
       if (!u || !u.rooming) return;
       const r = prRooming(u);
       if (r.camere.some((c) => c.persone.length > c.capienza)) { avviso("Una camera supera i posti: sposta qualcuno prima di confermare."); return; }
+      if (r.nonSistemati.length) { avviso(`${r.nonSistemati.length} persone sono senza camera: aggiungi posti o sistemale prima di confermare.`); return; }
       u.rooming.confermata = new Date().toISOString(); avviso("Rooming list confermata"); break;
     }
     case "pr-copia-rooming": { if (!u || !u.rooming || !u.rooming.confermata) return; S.eventi.messaggiCopiati++; salva(); copia(prTestoRooming(u, prRooming(u)), "Testo copiato: mandalo tu alla struttura"); return; }
@@ -719,7 +720,7 @@ document.addEventListener("submit", (e) => {
       L.scadenze.push({ voce: testo("voce", 60), data: d.data }); avviso("Scadenza aggiunta"); break;
     case "pr-abb":
       if (!PR_OFFERTE[d.offerta]) { avviso("Scegli un piano."); return; }
-      if (L.abbonamento.stato !== "checkout") L.abbonamento.prima = L.abbonamento.stato;
+      if (L.abbonamento.stato !== "checkout") { L.abbonamento.prima = L.abbonamento.stato; L.abbonamento.sceltaPrima = L.abbonamento.scelta ?? null; }
       L.abbonamento.scelta = d.offerta; L.abbonamento.stato = "checkout"; break;
     case "pr-feedback": {
       const t = prTrovaFeedback(f.dataset.codice);
@@ -757,7 +758,9 @@ document.addEventListener("submit", (e) => {
     case "pr-allergeni": {
       const c = prContatto(f.dataset.c); if (!c) return;
       if (!d.diretta || !testo("testo", 300) || !testo("chi", 60) || !/^\d{4}-\d{2}-\d{2}$/.test(d.il || "")) { avviso("Sugli allergeni serve la conferma diretta: chiedi alla struttura e scrivi chi e quando."); return; }
-      c.struttura ??= { servizi: [], orarioCena: "", note: "", dichiaratoDa: "da completare", aggiornata: isoLocale(new Date()) };
+      if (d.il > isoLocale(new Date())) { avviso("La data della conferma non può essere nel futuro."); return; }
+      // Solo gli allergeni: la scheda dei servizi resta da compilare, quindi niente data di aggiornamento.
+      c.struttura ??= { servizi: [], orarioCena: "", note: "", dichiaratoDa: "", aggiornata: null };
       c.struttura.allergeni = { testo: testo("testo", 300), chi: testo("chi", 60), il: d.il };
       avviso("Informazione salvata con conferma diretta"); break;
     }

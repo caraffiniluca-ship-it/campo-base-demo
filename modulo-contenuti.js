@@ -22,7 +22,9 @@
   function rimuoviContatti(testo) {
     let tel = 0, email = 0;
     let t = String(testo || "").replace(/[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g, () => { email++; return "[email rimossa]"; });
-    const reTel = /(?:(?:\+|00)\s?\d{2}[\s.\-]?)?(?:3\d{2}|0\d{1,3})(?:[\s.\-]?\d){5,8}\b|\+\d[\d\s.\-]{7,}\d/g;
+    // IBAN (anche con spazi): si toglie intero, prima dei telefoni, così non resta a metà.
+    t = t.replace(/\b[A-Z]{2}\d{2}(?: ?[A-Z0-9]){11,30}\b/g, () => { tel++; return "[IBAN rimosso]"; });
+    const reTel = /(?:(?:\+|00)\s?\d{2}[\s.\-]?)?(?:3\d{2}|0\d{1,3})(?:[\s.\-\/]?\d){5,8}\b|\+\d[\d\s.\-]{7,}\d|\b3(?:[ .\-]?\d){8,9}\b/g;
     t = t.replace(reTel, (m) => {
       if (/^\d{1,2}[.\-/]\d{1,2}[.\-/]\d{2,4}$/.test(m.trim())) return m; // è una data, non un numero di telefono
       tel++; return "[telefono rimosso]";
@@ -60,7 +62,7 @@
     let t = s.replace(EMOJI, " ")
       .replace(/\b(?:alle\s+)?(?:ore|h)?\s*\d{1,2}[:.]\d{2}\b/gi, " ")
       .replace(/\b(?:alle|ore)\s+\d{1,2}\b/gi, " ")
-      .split(/[.;(]\s|\s[-–|·]\s|\n/)[0];
+      .split(/[.;(]\s|\s*,|\s[-–|·]\s|\n/)[0];
     for (let i = 0; i < 4; i++) {
       t = t.trim().replace(/^[:,\-–·]+\s*/, "")
         .replace(/^(?:all'|dall'|nell'|davanti\s+(?:all'|alla|al|a)\s*|presso\s+(?:il|la|lo|l')?\s*|(?:a|al|alla|allo|ai|agli|alle|in|nel|nella|da|dal|dalla|è|e)\s+)/i, "");
@@ -87,6 +89,8 @@
     const mT = testo.match(/^\s*titolo\s*[:\-]\s*(.+)$/im);
     let titolo = mT ? mT[1] : (testo.split("\n").find((r) => /\p{L}{3,}/u.test(r.replace(EMOJI, ""))) || "");
     if (data) titolo = titolo.replace(data.testo, " ");
+    // Annuncio su una riga: il titolo è solo la parte prima di virgola, punto o "Ritrovo".
+    if (!mT) titolo = titolo.split(/\s*[,;]\s*|\.\s|\s[-–|·]\s|\s+(?:ritrovo|appuntamento|partenza|ore)\b/i)[0];
     titolo = titolo.replace(EMOJI, " ").replace(GIORNI_SETT, " ").replace(/\[(?:telefono|email) rimoss[oa]\]/g, " ")
       .replace(/\s{2,}/g, " ").replace(/^[\s:,\-–|·*_#]+|[\s:,\-–|·*_#!]+$/g, "").trim();
     if (titolo.length >= 3 && !/^(?:ritrovo|appuntamento)\b/i.test(titolo)) campi.titolo = titolo.slice(0, 70);
@@ -94,14 +98,14 @@
     const mKm = senzaData.match(/(\d+(?:[.,]\d+)?)\s*(?:km|chilometri)\b/i);
     if (mKm) campi.km = entro(numIt(mKm[1]), 0.1, 80);
 
-    const mD = senzaData.match(/(?:dislivello|disl\.?|d\+)\s*(?:positivo|in salita)?\s*[:=]?\s*\+?\s*(\d{1,2}\.\d{3}|\d{2,4})\s*(?:m|mt|metri)?\b/i)
-      || senzaData.match(/\+\s*(\d{1,2}\.\d{3}|\d{2,4})\s*(?:m|mt|metri)\b/i)
-      || senzaData.match(/(\d{1,2}\.\d{3}|\d{2,4})\s*(?:m|mt|metri)\s+(?:di\s+)?(?:dislivello|d\+)/i);
+    const mD = senzaData.match(/(\d{1,2}\.\d{3}|\d{2,4})\s*(?:m|mt|metri)\s+(?:di\s+)?(?:dislivello|d\+)/i)
+      || senzaData.match(/(?:dislivello|disl\.?|d\+)\s*(?:positivo|in salita)?\s*[:=]?\s*\+?\s*(\d{1,2}\.\d{3}|\d{2,4})(?!\d)(?!(?:[.,]\d+)?[ \t]*(?:€|euro|eur\b|km|chilometri|posti))\s*(?:m|mt|metri)?\b/i)
+      || senzaData.match(/\+\s*(\d{1,2}\.\d{3}|\d{2,4})\s*(?:m|mt|metri)\b/i);
     if (mD) campi.dislivello = entro(numIt(mD[1]), 0, 5000);
 
-    const mP = senzaData.match(/(\d+(?:[.,]\d{1,2})?)\s*(?:€|euro|eur)\b/i) || senzaData.match(/(\d+(?:[.,]\d{1,2})?)\s*€/)
-      || senzaData.match(/€\s*(\d+(?:[.,]\d{1,2})?)/)
-      || senzaData.match(/(?:quota|costo|prezzo|contributo)\s*(?:di\s+)?(?:partecipazione)?\s*[:=]?\s*(\d+(?:[.,]\d{1,2})?)\b(?!\s*(?:km|m\b|mt|metri|posti))/i);
+    const mP = senzaData.match(/(?:quota|costo|prezzo|contributo)[^\n\d€]{0,30}(?:€[ \t]?)?(\d+(?:[.,]\d{1,2})?)(?![\d.,]*[ \t]*(?:km|m\b|mt|metri|posti|persone))/i)
+      || senzaData.match(/€[ \t]?(\d+(?:[.,]\d{1,2})?)(?!\d)/)
+      || senzaData.match(/(\d+(?:[.,]\d{1,2})?)[ \t]?(?:€|euro\b|eur\b)/i);
     if (mP) campi.prezzo = entro(numIt(mP[1]), 0, 2000);
 
     const mPo = senzaData.match(/(\d{1,2})\s*posti/i) || senzaData.match(/posti\s*(?:disponibili|liberi)?\s*[:=]\s*(\d{1,2})\b/i)
@@ -173,9 +177,10 @@
     const conQuota = tutti.filter((p) => Number.isFinite(p.e));
     const passo = Math.max(1, Math.ceil(conQuota.length / 300));
     const prof = conQuota.filter((p, i) => i % passo === 0 || i === conQuota.length - 1).map((p) => ({ d: p.d, e: p.e }));
-    const poi = wpt.map((w) => {
+    const passoW = Math.max(1, Math.ceil(tutti.length / 5000)); // tracce enormi: si confrontano al più 5000 punti
+    const poi = wpt.slice(0, 50).map((w) => {
       let best = null, dmin = Infinity;
-      for (const p of tutti) { const d = distanza(p, w); if (d < dmin) { dmin = d; best = p; } }
+      for (let i = 0; i < tutti.length; i += passoW) { const p = tutti[i], d = distanza(p, w); if (d < dmin) { dmin = d; best = p; } }
       return best && dmin < 500 ? { nome: w.nome, d: best.d, e: Number.isFinite(best.e) ? best.e : null } : null;
     }).filter(Boolean).sort((a, b) => a.d - b.d).slice(0, 12);
     return { prof, poi, km: m / 1000 };
@@ -219,7 +224,9 @@
     let dbp = null;
     const apri = () => dbp ??= new Promise((ok, ko) => {
       if (!window.indexedDB) { dbp = null; ko(new Error("Questo browser non permette di salvare file: prova senza navigazione privata.")); return; }
-      const r = indexedDB.open("campobase-contenuti", 1);
+      let r;
+      try { r = indexedDB.open("campobase-contenuti", 1); }
+      catch (x) { dbp = null; ko(new Error("Archivio dei file non disponibile: il browser blocca IndexedDB (navigazione privata?).")); return; }
       r.onupgradeneeded = () => { r.result.createObjectStore("file"); r.result.createObjectStore("chiavi"); };
       r.onsuccess = () => ok(r.result);
       r.onerror = () => { dbp = null; ko(new Error("Archivio dei file non disponibile: il browser blocca IndexedDB (navigazione privata?).")); };
@@ -537,7 +544,7 @@
 
   // ---------- F71 Documenti dell'uscita ----------
   const TIPI_DOC = { "application/pdf": "pdf", "image/jpeg": "jpg", "image/png": "png" };
-  const NOMI_VIETATI = /(carta.?d.?identit|identity|passaport|passport|patente|tessera.?sanitaria|codice.?fiscale|certificat\w*.?medic|referto|ricetta|sanitari|allerg|diagnos|cartella.?clinica)/i;
+  const NOMI_VIETATI = /(carta.?d?.?identit|^ci[\W_]|documento.?identit|tessera|identity|passaport|passport|patente|tessera.?sanitaria|codice.?fiscale|certificat\w*.?medic|referto|ricetta|sanitari|allerg|diagnos|cartella.?clinica)/i;
   async function tipoReale(file) {
     const b = new Uint8Array(await file.slice(0, 8).arrayBuffer());
     if (b[0] === 0x25 && b[1] === 0x50 && b[2] === 0x44 && b[3] === 0x46) return "application/pdf";
@@ -657,7 +664,8 @@
         <p class="nota">${consensoFoto(p) ? "Hai dato il consenso a comparire nelle foto pubblicate." : "Non hai dato il consenso: le foto in cui compari restano private."}</p>
         <button class="btn secondario" data-azione="cn-p-foto" data-codice="${esc(codice)}">${consensoFoto(p) ? "Ritira il consenso foto" : "Do il consenso foto"}</button></section>`;
     const segno = '<button class="btn secondario testo-errore" data-azione="p-disdici"';
-    return html.includes(segno) ? html.replace(segno, pezzo + segno) : html + pezzo;
+    for (const s of [segno, '<p class="nota">Questo link è solo tuo', '<div class="powered']) if (html.includes(s)) return html.replace(s, pezzo + s);
+    return html + pezzo;
   };
 
   // ---------- eventi ----------
@@ -751,10 +759,12 @@
         const tot = C.analizzaGPX(testo), { punti, wpt } = leggiGPX(testo), pr = profiloDaPunti(punti, wpt);
         pitchGPX[Number(el.dataset.id)] = { tot, prof: pr.prof, poi: pr.poi };
         mostra();
-      } catch (x) { esito.className = "testo-errore"; esito.textContent = x.message; }
+      } catch (x) { delete pitchGPX[Number(el.dataset.id)]; esito.className = "testo-errore"; esito.textContent = x.message; }
     }
   });
 
+  // Safari prima della 15.4 non ha e.submitter: si ricorda il tasto premuto.
+  document.addEventListener("click", (e) => { const b = e.target.closest && e.target.closest("button"); if (b && b.form && b.type === "submit") b.form._ultimoTasto = b.value; }, true);
   document.addEventListener("submit", async (e) => {
     const f = e.target, tipo = f.dataset.form || "";
     if (!tipo.startsWith("cn-")) return;
@@ -794,7 +804,7 @@
       vocali[u.id] = { trascrizione: tr, messaggio: r.testo, dallaScheda: r.dallaScheda }; mostra(); return;
     }
     if (tipo === "cn-pillola") {
-      const azione = e.submitter?.value === "pubblica" ? "pubblica" : "bozza";
+      const azione = (e.submitter ? e.submitter.value : f._ultimoTasto) === "pubblica" ? "pubblica" : "bozza";
       const profilo = f.dataset.dove === "profilo";
       const casa = profilo ? null : uscita(f.dataset.dove.slice(1));
       let p = profilo ? S.leader.presentazione : f.dataset.pid ? trovaPillola(f.dataset.pid)?.p : null;

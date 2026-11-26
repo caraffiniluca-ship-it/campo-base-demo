@@ -283,7 +283,7 @@ const ModuloUscita = (() => {
     if (!u) return nonTrovata();
     dati(u);
     const conf = confermati(u);
-    for (const x of u.extra) x.aderenti = x.aderenti.filter((pid) => u.partecipanti.some((p) => p.id === pid)); // chi è cancellato sparisce
+    for (const x of u.extra) x.aderenti = x.aderenti.filter((pid) => conf.some((p) => p.id === pid)); // chi è cancellato o torna in lista sparisce
     return `${testa(u, "Attività extra")}
     <form class="box modulo" data-form="us-extra" data-id="${u.id}">
       <span class="eti">Nuovo extra</span>
@@ -304,6 +304,7 @@ const ModuloUscita = (() => {
         <div class="dato"><b>${x.aderenti.length}</b><span>aderenti</span></div>
         <div class="dato"><b>${q === null ? "—" : euroQ(q)}</b><span>per partecipante</span></div>
       </div>
+      ${x.modo === "totale" && q !== null && Math.round(q * x.aderenti.length * 100) !== Math.round(Number(x.costo) * 100) ? `<p class="nota">Le quote arrotondate fanno ${euroQ(q * x.aderenti.length)}: la differenza di ${euroQ(Math.round((Number(x.costo) - q * x.aderenti.length) * 100) / 100)} va aggiunta a una quota.</p>` : ""}
       ${conf.length ? `<div class="chips">${conf.map((p) => `<button class="btn secondario piccolo" aria-pressed="${x.aderenti.includes(p.id)}" data-azione="us-extra-ader" data-id="${u.id}" data-extra="${x.id}" data-p="${p.id}">${x.aderenti.includes(p.id) ? "✓ " : ""}${esc(p.nome)}</button>`).join("")}</div>
         <p class="nota">Tocca un nome per segnare chi aderisce.</p>` : `<p class="nota">Nessun confermato a cui proporlo.</p>`}
     </section>`; }).join("")}
@@ -453,6 +454,7 @@ const ModuloUscita = (() => {
     const rapide = u ? `<div class="azioni">
       <a class="btn tasto" href="#extra/${u.id}" data-azione="us-rapida"><span aria-hidden="true">＋</span>Extra</a>
       <a class="btn tasto" href="#soste/${u.id}" data-azione="us-rapida"><span aria-hidden="true">＋</span>Sosta</a>
+      <a class="btn tasto" href="#tappe/${u.id}" data-azione="us-rapida"><span aria-hidden="true">＋</span>Tappa</a>
       <a class="btn tasto" href="#sondaggio/${u.id}" data-azione="us-rapida"><span aria-hidden="true">＋</span>Sondaggio</a>
     </div>` : "";
     const a = html.indexOf('<div class="azioni">');
@@ -536,7 +538,8 @@ const ModuloUscita = (() => {
         avviso("Sosta eliminata: i suoi spunti restano senza sosta"); break;
       }
       case "us-tappa-su": case "us-tappa-giu": {
-        const i = u.tappe.findIndex((x) => x.id === Number(el.dataset.tappa));
+        const i = u.tappe.findIndex((x) => x.id === Number(el.dataset.tappa)), j = i + (az === "us-tappa-su" ? -1 : 1);
+        if (u.tappe[i] && u.tappe[j] && String(u.tappe[i].giorno) !== String(u.tappe[j].giorno)) { avviso("Le tappe si spostano dentro lo stesso giorno: per cambiare giorno modifica la tappa."); return; }
         if (!sposta(u.tappe, i, az === "us-tappa-su" ? -1 : 1)) return;
         break;
       }
@@ -554,7 +557,7 @@ const ModuloUscita = (() => {
         if (!s) return;
         S.eventi.messaggiCopiati++; salva(); copia(testoSondaggio(u.titolo, s), "Sondaggio copiato: incollalo nel gruppo WhatsApp"); return;
       }
-      case "us-sond-via": u.sondaggi = u.sondaggi.filter((x) => x.id !== Number(el.dataset.sond)); break;
+      case "us-sond-via": if (!conferma("Sicuro?")) return; u.sondaggi = u.sondaggi.filter((x) => x.id !== Number(el.dataset.sond)); break;
       case "us-prom-copia": S.eventi.messaggiCopiati++; salva(); copia(testoPromemoria(u, el.dataset.chiave), "Testo copiato: incollalo nel gruppo WhatsApp"); return;
       case "us-prom-fatto": u.promemoriaFatti[el.dataset.chiave] = !u.promemoriaFatti[el.dataset.chiave]; break;
       case "us-z-via": case "us-z-verifica": case "us-z-approva": {
@@ -569,7 +572,7 @@ const ModuloUscita = (() => {
         }
         const v = z.voci.find((x) => x.id === Number(el.dataset.voce));
         if (!v) return;
-        if (az === "us-z-via") { z.voci = z.voci.filter((x) => x !== v); z.approvato = null; }
+        if (az === "us-z-via") { if (!conferma("Sicuro?")) return; z.voci = z.voci.filter((x) => x !== v); z.approvato = null; }
         else { v.link.verificato = oggiIso(); avviso("Link segnato come verificato oggi"); }
         break;
       }
@@ -601,6 +604,7 @@ const ModuloUscita = (() => {
       const url = testo("url", 300);
       if (url && !urlValido(url)) { avviso("Il link deve iniziare con https:// ed essere un indirizzo completo."); return; }
       if (url && !d.verificato) { avviso("Indica la data in cui hai verificato il link."); return; }
+      if (url && d.verificato > oggiIso()) { avviso("La data di verifica non può essere nel futuro."); return; }
       z.voci.push({ id: nuovoId(), testo: voce, link: url ? { tipo: "neutro", etichetta: testo("etichetta", 40) || "Scheda", url, verificato: d.verificato } : null });
       z.approvato = null;
       ridisegna(); avviso("Voce aggiunta: approva lo zaino per mostrarlo ai partecipanti"); return;
@@ -652,6 +656,7 @@ const ModuloUscita = (() => {
       case "us-extra": {
         const titolo = testo("titolo", 60), costo = Number(d.costo);
         if (!titolo || d.costo === "" || !(costo >= 0)) { avviso("Indica cosa è l'extra e il suo costo."); return; }
+        if (costo > 5000) { avviso("Il costo massimo di un extra è 5000 €."); return; }
         const tipo = ["leader", "agenzia", "fornitore"].includes(d.org) ? d.org : "leader";
         u.extra.push({ id: nuovoId(), titolo, costo, modo: d.modo === "totale" ? "totale" : "persona", organizzatore: { tipo, nome: testo("orgnome", 50) }, aderenti: [] });
         avviso("Extra aggiunto: segna chi aderisce"); break;
