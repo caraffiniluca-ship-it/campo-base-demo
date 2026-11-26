@@ -1,0 +1,28 @@
+// Service worker della demo: mette in cache i file dell'app per l'uso senza rete (Modo sentiero).
+// Nella demo non ci sono dati sul server, quindi si mette in cache solo il guscio dell'app.
+// Cambiare VERSIONE a ogni pubblicazione, così i telefoni scaricano i file nuovi.
+const VERSIONE = "campobase-demo-v2";
+const FILE = [
+  "./", "./index.html", "./app.css", "./app.js", "./calcoli.js", "./manifest.webmanifest",
+  "./icone/icon-192.png", "./icone/icon-512.png",
+  "./font/outfit-latin.woff2", "./font/outfit-latin-ext.woff2",
+  "./font/inter-latin.woff2", "./font/inter-latin-ext.woff2",
+];
+
+self.addEventListener("install", (e) => {
+  e.waitUntil(caches.open(VERSIONE).then((c) => c.addAll(FILE)).then(() => self.skipWaiting()));
+});
+
+self.addEventListener("activate", (e) => {
+  e.waitUntil(
+    caches.keys()
+      .then((chiavi) => Promise.all(chiavi.filter((k) => k !== VERSIONE).map((k) => caches.delete(k))))
+      .then(() => self.clients.claim())
+  );
+});
+
+// Prima la cache, poi la rete: l'app si apre anche senza segnale.
+self.addEventListener("fetch", (e) => {
+  if (e.request.method !== "GET" || new URL(e.request.url).origin !== self.location.origin) return;
+  e.respondWith(caches.match(e.request, { ignoreSearch: true }).then((r) => r || fetch(e.request)));
+});

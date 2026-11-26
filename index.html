@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#123A6B">
+  <meta name="description" content="Campo Base, demo dell'app per leader di trekking. Dati di esempio, nessun dato reale.">
+  <meta name="referrer" content="no-referrer">
+  <title>Campo Base · demo</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icone/icon-192.png">
+  <link rel="apple-touch-icon" href="icone/icon-192.png">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <div class="demo-banner" role="note">DEMO · solo dati di esempio, non inserire dati reali</div>
+  <main id="app" tabindex="-1"></main>
+  <nav class="nav" id="nav" aria-label="Navigazione">
+    <a href="#oggi" data-sez="oggi"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>Oggi</a>
+    <a href="#uscite" data-sez="uscite"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 19l6-12 4 7 2-3 6 8z"/></svg>Uscite</a>
+    <a href="#profilo" data-sez="profilo"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>Profilo</a>
+  </nav>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <script src="calcoli.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
