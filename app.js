@@ -806,4 +806,7 @@ window.addEventListener("hashchange", mostra);
 window.addEventListener("DOMContentLoaded", () => { carica(); mostra(); });
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+  // Quando arriva una versione nuova dell'app, la pagina si ricarica una volta da sola.
+  let ricaricata = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => { if (!ricaricata) { ricaricata = true; location.reload(); } });
 }
