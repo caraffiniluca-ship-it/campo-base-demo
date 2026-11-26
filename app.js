@@ -1,7 +1,7 @@
 // Campo Base · demo installabile. Tutti i dati sono di esempio e restano solo su questo telefono.
 "use strict";
 
-const CHIAVE = "campobase-demo-v1";
+const CHIAVE = "campobase-demo-v2"; // chiave nuova: chi aveva i dati vecchi riparte dagli esempi aggiornati
 const MARGINE_RIENTRO = 30; // minuti tra ora limite di rientro e tramonto
 const C = Calcoli;
 
@@ -21,7 +21,7 @@ function datiDemo() {
   return {
     versione: 1,
     leader: {
-      nome: "Marta Bianchi", marchio: "Sentieri di Marta",
+      nome: "Enrico", marchio: "Sentieri di Enrico",
       titolo: "Guida ambientale escursionistica", zone: "Appennino umbro-marchigiano",
       contatto: "WhatsApp 333 000 0000 (esempio)", piva: "01234567890 (esempio)",
       scadenze: [{ voce: "RC professionale", data: fra(66) }, { voce: "Aggiornamento BLSD", data: fra(170) }],
