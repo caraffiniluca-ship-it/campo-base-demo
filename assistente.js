@@ -4,29 +4,54 @@
 "use strict";
 
 // ---------- mascotte ----------
-const nomeMascotte = () => (S.leader.mascotteNome || S.leader.nome || "Assistente").split(" ")[0];
-function immagineMascotte() {
-  if (S.leader.mascotteFoto) return S.leader.mascotteFoto;                       // foto del leader in stile illustrato
-  if (/^enrico\b/i.test(S.leader.nome || "")) return "icone/mascotte-enrico.svg"; // disegno già pronto di Enrico
-  return null;                                                                    // altrimenti iniziali sui colori del marchio
+const nomeMascotte = (nome) => (nome || S.leader.mascotteNome || S.leader.nome || "Assistente").trim().split(/\s+/)[0] || "Assistente";
+// nome facoltativo: serve all'anteprima del benvenuto, che mostra la mascotte mentre si scrive il nome
+function immagineMascotte(nome) {
+  if (S.leader.mascotteFoto) return S.leader.mascotteFoto;                        // foto del leader in stile illustrato
+  if (/^enrico\b/i.test(nome ?? S.leader.nome ?? "")) return "icone/mascotte-enrico.svg"; // disegno già pronto di Enrico
+  return null;                                                                     // altrimenti iniziale sui colori del marchio
 }
-function avatarMascotte(classe = "") {
-  const img = immagineMascotte();
+function avatarMascotte(classe = "", nome) {
+  const img = immagineMascotte(nome), n = nomeMascotte(nome);
   return img
-    ? `<img class="mascotte ${classe}" src="${esc(img)}" alt="Mascotte ${esc(nomeMascotte())}">`
-    : `<span class="mascotte mascotte-iniziali ${classe}" aria-label="Mascotte ${esc(nomeMascotte())}">${esc(nomeMascotte().slice(0, 1).toUpperCase())}</span>`;
+    ? `<img class="mascotte ${classe}" src="${esc(img)}" alt="Mascotte ${esc(n)}">`
+    : `<span class="mascotte mascotte-iniziali ${classe}" aria-label="Mascotte ${esc(n)}">${esc(n.slice(0, 1).toUpperCase())}</span>`;
+}
+
+// Legge la foto in modo compatibile con iPhone (Safari) e Android (Chrome): prima createImageBitmap,
+// poi l'elemento <img>, che su Safari decodifica anche le foto HEIC convertite al caricamento.
+async function leggiImmagine(file) {
+  if (window.createImageBitmap) {
+    try { return await createImageBitmap(file); } catch (e) { /* si prova con <img> */ }
+  }
+  const url = URL.createObjectURL(file);
+  try {
+    const img = new Image();
+    img.decoding = "async";
+    await new Promise((ok, ko) => { img.onload = ok; img.onerror = ko; img.src = url; });
+    return img;
+  } catch (e) {
+    throw new Error("Non riesco a leggere questa foto. Scegline un'altra o fai uno screenshot della foto e carica quello.");
+  } finally {
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  }
 }
 
 // Trasforma la foto in un ritratto illustrato, tutto sul telefono: colori ridotti e contorni scuri.
 // Ridisegnare l'immagine su canvas toglie anche i metadati EXIF (posizione, dispositivo).
+// Si accettano foto fino a 25 MB perché quelle dei telefoni moderni superano spesso i 5 MB:
+// si conserva solo il ritratto ridotto a 320 px, di pochi kB.
 async function fotoInMascotte(file) {
-  if (!/^image\/(jpeg|png|webp)$/.test(file.type)) throw new Error("Usa una foto JPEG, PNG o WebP.");
-  if (file.size > 5 * 1024 * 1024) throw new Error("La foto supera 5 MB.");
-  const bmp = await createImageBitmap(file);
-  const L = 320, lato = Math.min(bmp.width, bmp.height);
+  if (file.type && !file.type.startsWith("image/")) throw new Error("Scegli una foto, non un altro tipo di file.");
+  if (file.size > 25 * 1024 * 1024) throw new Error("La foto supera 25 MB: scegline una più leggera.");
+  const bmp = await leggiImmagine(file);
+  const larg = bmp.width || bmp.naturalWidth, alt = bmp.height || bmp.naturalHeight;
+  if (!larg || !alt) throw new Error("Non riesco a leggere questa foto. Scegline un'altra.");
+  const L = 320, lato = Math.min(larg, alt);
+  const bmpW = larg, bmpH = alt;
   const cv = Object.assign(document.createElement("canvas"), { width: L, height: L });
   const g = cv.getContext("2d");
-  g.drawImage(bmp, (bmp.width - lato) / 2, (bmp.height - lato) / 2, lato, lato, 0, 0, L, L);
+  g.drawImage(bmp, (bmpW - lato) / 2, (bmpH - lato) / 2, lato, lato, 0, 0, L, L);
   const im = g.getImageData(0, 0, L, L), d = im.data;
   const lum = new Float32Array(L * L);
   for (let i = 0; i < L * L; i++) lum[i] = 0.299 * d[i * 4] + 0.587 * d[i * 4 + 1] + 0.114 * d[i * 4 + 2];
@@ -47,6 +72,16 @@ async function fotoInMascotte(file) {
   return cv.toDataURL("image/jpeg", 0.82);
 }
 
+// Anteprima della mascotte con il nome che si sta scrivendo (si aggiorna senza ridisegnare il modulo,
+// così non si perde quello che è già stato scritto).
+function anteprimaMascotte(nome) {
+  const n = nomeMascotte(nome);
+  const nota = S.leader.mascotteFoto ? "La tua foto è diventata la mascotte."
+    : immagineMascotte(nome) ? "Per Enrico c'è già la mascotte disegnata. Puoi sostituirla con la tua foto."
+    : "Senza foto la mascotte usa la tua iniziale.";
+  return `${avatarMascotte("grande", nome)}<div><b>${esc(n)}</b><p class="nota" id="nota-foto">${esc(nota)}</p></div>`;
+}
+
 // ---------- benvenuto: alla registrazione si scelgono nome e foto, e la mascotte prende il nome del leader ----------
 V.benvenuto = () => `<div class="accesso">
   <h1>Benvenuto in Gruvia</h1>
@@ -57,8 +92,8 @@ V.benvenuto = () => `<div class="accesso">
     <label for="bv-marchio">Nome della tua attività *</label>
     <input id="bv-marchio" name="marchio" required maxlength="50" value="${esc(S.leader.marchio || "")}">
     <label for="bv-foto">Foto profilo (facoltativa)</label>
-    <input id="bv-foto" name="foto" type="file" accept="image/jpeg,image/png,image/webp" data-azione="foto-mascotte">
-    <div class="anteprima-mascotte">${avatarMascotte("grande")}<p class="nota" id="nota-foto">${S.leader.mascotteFoto ? "La tua foto è diventata la mascotte." : immagineMascotte() ? "Per Enrico c'è già la mascotte disegnata. Puoi sostituirla con la tua foto." : "Senza foto la mascotte usa la tua iniziale."}</p></div>
+    <input id="bv-foto" name="foto" type="file" accept="image/*" data-azione="foto-mascotte">
+    <div class="anteprima-mascotte" id="anteprima-mascotte">${anteprimaMascotte(S.leader.nome)}</div>
     <button class="btn primario" type="submit">Inizia</button>
     <p class="nota">La foto viene trasformata e resta solo su questo telefono, senza metadati. Puoi cambiarla dal Profilo.</p>
   </form></div>`;
@@ -150,10 +185,18 @@ V.oggi = () => vistaOggiBase() + `<a class="fab-mascotte" href="#assistente" ari
 
 const vistaProfiloBase = V.profilo;
 V.profilo = () => vistaProfiloBase().replace('<section class="box">', `<section class="box">
-      <span class="eti">La tua mascotte</span>
-      <div class="anteprima-mascotte">${avatarMascotte("grande")}<div><b>${esc(nomeMascotte())}</b><p class="nota">Ti aiuta a rispondere alle domande sulle uscite. Prende il tuo nome e, se carichi una foto, il tuo aspetto.</p></div></div>
+      <span class="eti">Tu e la tua mascotte</span>
+      <div class="anteprima-mascotte" id="anteprima-mascotte">${anteprimaMascotte()}</div>
+      <p class="nota">La mascotte ti aiuta a rispondere alle domande sulle uscite. Prende il tuo nome e, se carichi una foto, il tuo aspetto.</p>
+      <form class="modulo" data-form="cambia-nome">
+        <label for="pr-nome">Il tuo nome</label>
+        <input id="pr-nome" name="nome" required maxlength="40" autocomplete="given-name" value="${esc(S.leader.nome || "")}">
+        <label for="pr-marchio">Nome della tua attività</label>
+        <input id="pr-marchio" name="marchio" required maxlength="50" value="${esc(S.leader.marchio || "")}">
+        <button class="btn secondario" type="submit">Salva nome</button>
+      </form>
       <label class="eti" for="pr-foto">Cambia foto</label>
-      <input id="pr-foto" type="file" accept="image/jpeg,image/png,image/webp" data-azione="foto-mascotte">
+      <input id="pr-foto" type="file" accept="image/*" data-azione="foto-mascotte">
       ${S.leader.mascotteFoto ? `<button class="btn secondario piccolo" data-azione="foto-rimuovi">Togli la foto</button>` : ""}
       <a class="btn secondario" href="#assistente">Apri l'assistente</a>
     </section>
@@ -169,24 +212,60 @@ document.addEventListener("click", async (e) => {
   if (el.dataset.azione === "foto-rimuovi") { delete S.leader.mascotteFoto; salva(); mostra(); avviso("Foto tolta"); }
 });
 
+// Nome dell'attività proposto dal nome: "Sentieri di X" segue il nome finché il leader non lo cambia a mano.
+const marchioAutomatico = (nome) => `Sentieri di ${nomeMascotte(nome)}`;
+document.addEventListener("input", (e) => {
+  if (e.target.id !== "bv-nome" && e.target.id !== "pr-nome") return;
+  const form = e.target.form, marchio = form && form.marchio;
+  const nome = e.target.value;
+  if (marchio && (marchio.dataset.automatico === "1" || /^Sentieri di \S*$/.test(marchio.value))) {
+    marchio.value = marchioAutomatico(nome); marchio.dataset.automatico = "1";
+  }
+  const box = document.getElementById("anteprima-mascotte");
+  if (box) box.innerHTML = anteprimaMascotte(nome);
+});
+document.addEventListener("input", (e) => { if (e.target.name === "marchio" && e.isTrusted) e.target.dataset.automatico = "0"; });
+
 document.addEventListener("change", async (e) => {
-  if (e.target.dataset.azione !== "foto-mascotte" || !e.target.files[0]) return;
+  if (e.target.dataset.azione !== "foto-mascotte" || !e.target.files || !e.target.files[0]) return;
+  const box = document.getElementById("anteprima-mascotte");
+  const nomeScritto = document.getElementById("bv-nome")?.value || document.getElementById("pr-nome")?.value;
+  if (box) box.querySelector("#nota-foto") && (box.querySelector("#nota-foto").textContent = "Sto creando la mascotte dalla foto…");
   try {
     S.leader.mascotteFoto = await fotoInMascotte(e.target.files[0]);
-    salva(); mostra(); avviso("La tua foto è diventata la mascotte");
-  } catch (err) { avviso(err.message || "Non riesco a leggere questa foto."); }
+    salva();
+    // Si aggiorna solo l'anteprima: il resto del modulo, con il nome già scritto, resta com'è.
+    if (box) box.innerHTML = anteprimaMascotte(nomeScritto); else mostra();
+    avviso("La tua foto è diventata la mascotte");
+  } catch (err) {
+    if (box) box.innerHTML = anteprimaMascotte(nomeScritto);
+    avviso(err.message || "Non riesco a leggere questa foto.");
+  } finally {
+    e.target.value = ""; // permette di ricaricare la stessa foto
+  }
 });
+
+function salvaNome(f, benvenuto) {
+  const d = Object.fromEntries(new FormData(f));
+  const nome = String(d.nome || "").trim().slice(0, 40);
+  const marchio = String(d.marchio || "").trim().slice(0, 50) || marchioAutomatico(nome);
+  if (!nome) { avviso("Scrivi il tuo nome."); return false; }
+  // La mascotte prende il nome di chi si registra; il disegno di Enrico vale solo per Enrico.
+  Object.assign(S.leader, { nome, marchio, mascotteNome: nome });
+  if (benvenuto) S.leader.configurato = true;
+  salva();
+  return true;
+}
 
 document.addEventListener("submit", (e) => {
   const f = e.target;
   if (f.dataset.form === "domanda") { e.preventDefault(); chiedi(new FormData(f).get("domanda") || ""); }
   if (f.dataset.form === "benvenuto") {
     e.preventDefault();
-    const d = Object.fromEntries(new FormData(f));
-    const nome = String(d.nome || "").trim().slice(0, 40), marchio = String(d.marchio || "").trim().slice(0, 50);
-    if (!nome || !marchio) { avviso("Scrivi il tuo nome e quello della tua attività."); return; }
-    // La mascotte prende il nome di chi si registra; il disegno di Enrico vale solo per Enrico.
-    Object.assign(S.leader, { nome, marchio, mascotteNome: nome, configurato: true });
-    salva(); location.hash = "#oggi"; avviso(`Ciao ${nome.split(" ")[0]}: la tua mascotte è pronta`);
+    if (salvaNome(f, true)) { location.hash = "#oggi"; mostra(); avviso(`Ciao ${nomeMascotte()}: la tua mascotte è pronta`); }
+  }
+  if (f.dataset.form === "cambia-nome") {
+    e.preventDefault();
+    if (salvaNome(f, false)) { mostra(); avviso(`Fatto: ora la mascotte si chiama ${nomeMascotte()}`); }
   }
 }, true);

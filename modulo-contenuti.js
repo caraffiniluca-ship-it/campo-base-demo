@@ -507,7 +507,7 @@
         <h1>Pitch dell'uscita</h1>
         <p class="nota">Scheda da stampare o salvare in PDF. Dati dalla tua scheda e dal GPX che carichi qui (il file non viene salvato). Nessun prezzo e nessuna mappa di terzi.</p>
         <form class="box modulo"><label for="cn-pitch-gpx">GPX per l'altimetria</label>
-          <input id="cn-pitch-gpx" type="file" accept=".gpx,application/gpx+xml" data-azione="cn-gpx" data-id="${u.id}">
+          <input id="cn-pitch-gpx" type="file" data-azione="cn-gpx" data-id="${u.id}">
           <p class="nota" id="cn-esito-pitch">${g ? `Letto: ${C.numero(g.tot.km)} km, +${C.numero(g.tot.dislivello)} m, ${g.tot.punti} punti.` : "I waypoint del GPX diventano i punti di interesse."}</p></form>
         <button class="btn primario" data-azione="cn-stampa">Stampa o salva in PDF</button>
       </div>

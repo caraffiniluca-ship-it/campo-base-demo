@@ -454,7 +454,7 @@ function moduloUscita(u) {
     <h1>${u ? "Modifica uscita" : "Nuova uscita"}</h1>
     <form class="box modulo" data-form="uscita" data-id="${u ? u.id : ""}" novalidate>
       <label for="f-gpx">Importa un file GPX (facoltativo)</label>
-      <input id="f-gpx" type="file" accept=".gpx,application/gpx+xml" data-azione="gpx">
+      <input id="f-gpx" type="file" data-azione="gpx">
       <p class="nota" id="esito-gpx">Distanza, dislivello e quote vengono calcolati dal file. Il file non viene salvato.</p>
       <label for="f-att">Attività *</label>
       <select id="f-att" name="attivita"><option value="trekking" selected>Trekking</option></select>
