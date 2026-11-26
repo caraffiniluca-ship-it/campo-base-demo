@@ -100,7 +100,7 @@ function prInit() {
   if (L.prEsempi) return;
   L.prEsempi = true;
   if (!L.ente) L.ente = "Associazione di categoria (esempio)";
-  const rifugio = { id: nuovoId(), tipo: "rifugio", nome: "Rifugio del Monte (esempio)", telefono: "000 000 0000 (esempio)", email: "rifugio@esempio.it", nota: "Gestore: Marta. Meglio chiamare dopo le 18.",
+  const rifugio = { id: nuovoId(), tipo: "rifugio", nome: "Rifugio del Monte (esempio)", telefono: "000 000 0000 (esempio)", email: "rifugio@esempio.it", nota: "Gestore: Paola. Meglio chiamare dopo le 18.",
     struttura: { servizi: ["Sacco lenzuolo obbligatorio", "Docce calde", "Ricarica telefoni", "Camerate", "Mezza pensione"], orarioCena: "19:30", note: "Camere: 2 da 4 posti, 2 da 2, 1 singola.", dichiaratoDa: "gestore, al telefono", aggiornata: prIso(-20), allergeni: null } };
   L.rubrica.push(rifugio,
     { id: nuovoId(), tipo: "ristorante", nome: "Trattoria della Valle (esempio)", telefono: "000 111 1111 (esempio)", email: "", nota: "Menu di gruppo su prenotazione.", struttura: null },
